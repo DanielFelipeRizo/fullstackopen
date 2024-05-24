@@ -1,0 +1,12 @@
+
+sequenceDiagram
+    participant browser
+    participant server
+
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+	Note right of browser: request payload: {"content":"rtr","date":"2024-05-24T01:58:18.928Z"}
+    activate server
+    server-->>browser: {"message":"note created"}, code 201
+    deactivate server
+
