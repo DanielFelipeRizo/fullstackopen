@@ -16,7 +16,6 @@ const App2 = () => {
     const points = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
     const [selectedPoints, setSelectedPoints] = useState(points);
     const copyPoints = { ...selectedPoints };
-    let valVotes = false;
 
     const handleClickRandom = () => {
         const RandomNumber = Math.floor(Math.random() * 7) + 1;
@@ -27,8 +26,7 @@ const App2 = () => {
     const handleClickVote = () => {
         copyPoints[selected] += 1;
         setSelectedPoints(copyPoints)
-        valVotes = true;
-        console.log('copyPoints', copyPoints);
+        //console.log('copyPoints', copyPoints);
     }
 
     function mostVotes() {
