@@ -1,12 +1,20 @@
 const blogsRouter = require('express').Router()
-const { request, response } = require('express')
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
 
 blogsRouter.get('/', async (request, response) => {
 
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
-
 })
 
 blogsRouter.get('/:id', async (request, response) => {
@@ -18,11 +26,28 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const currentBlog = request.body
-  currentBlog.likes = currentBlog.likes || 0
-  const blog = new Blog(currentBlog)
+  const bodyBlog = request.body
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
 
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+
+  const user = await User.findById(decodedToken.id)
+
+  const blog = new Blog(
+    {
+      title: bodyBlog.title,
+      author: bodyBlog.author,
+      url: bodyBlog.url,
+      likes: bodyBlog.likes || 0,
+      user: user.id
+    })
   const savedBlog = await blog.save()
+
+  user.blogs = user.blogs.concat(savedBlog._id)
+  await user.save()
+
   response.status(201).json(savedBlog)
 })
 
@@ -35,10 +60,10 @@ blogsRouter.put('/:id', async (request, response) => {
     likes: body.likes
   }
 
-  const currentBlog = await Blog.findById(request.params.id)
-  if (currentBlog) {
+  const bodyBlog = await Blog.findById(request.params.id)
+  if (bodyBlog) {
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-    
+
     response.json(updatedBlog)
   } else {
     response.status(404).json({ error: "resource not found" })
@@ -46,8 +71,8 @@ blogsRouter.put('/:id', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const currentBlog = await Blog.findById(request.params.id)
-  if (currentBlog) {
+  const bodyBlog = await Blog.findById(request.params.id)
+  if (bodyBlog) {
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end()
   } else {
