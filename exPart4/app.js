@@ -26,8 +26,12 @@ app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json())
 app.use(middleware.requestLogger)
+//en este middleware se le agrega el token al request para que 
+//todas las rutas a partir de aca tengan el token decodificado en el request
+app.use(middleware.tokenExtractor)
+//app.use(middleware.userExtractor)
 
-app.use('/api/blogs', blogsRouter)
+app.use('/api/blogs', middleware.userExtractor, blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 

@@ -1,31 +1,47 @@
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
-const initialBlogs = [
+const initialUsers = [
   {
-    "title": "titulo",
-    "author": "dfr",
-    "url": "www.s.com",
-    "likes": 4
+    "_id": "66d3cd67e83d52e7e6959ce2",
+    "username": "dfr11",
+    "name": "Daniel",
+    "passwordHash": "$2b$10$lfUPrp.9.TW8tZuETLeCkeeTPhE7UQm4TCVx8AV3MR49qylFfhgO2",
+    "blogs": ["66d3bafc77e8503cc69ae392", "66d3c57377e8503cc69ae39a"]
   },
   {
-    "title": "titulo1",
-    "author": "dfr",
-    "url": "www.s1.com",
-    "likes": 1
+    "_id": "66d3cd67e83d52e7e6959ce3",
+    "username": "admin",
+    "name": "admin D",
+    "passwordHash": "$2b$10$lfUPrp.9.TW8tZuETLeCkeeTPhE7UQm4TCVx8AV3MR49qylFfhgO2",
+    "blogs": ["66d3c5fc77e8503cc69ae3a3"]
   }
 ]
 
-const initialUsers = [
+const initialBlogs = [
   {
-    "username": "dfr",
-    "name": "Daniel",
-    "blogs": []
+    "title": "titulo",
+    "author": "dfr11",
+    "url": "www.titulo.com",
+    "likes": "55",
+    "user": "66d3cd67e83d52e7e6959ce2",
+    "_id": "66d3bafc77e8503cc69ae392"
   },
   {
-    "username": "prueba 1",
-    "name": "prueba 1",
-    "blogs": []
+    "title": "otra",
+    "author": "dfr11",
+    "url": "www.otra.com",
+    "likes": "31",
+    "user": "66d3cd67e83d52e7e6959ce2",
+    "_id": "66d3c57377e8503cc69ae39a"
+  },
+  {
+    "title": "admin test",
+    "author": "admin test",
+    "url": "www.admintest.com",
+    "likes": "30",
+    "user": "66d3cd67e83d52e7e6959ce3",
+    "_id": "66d3c5fc77e8503cc69ae3a3"
   }
 ]
 
@@ -37,16 +53,16 @@ const nonExistingId = async () => {
   return blog._id.toString()
 }
 
-const blogsInDb = async () => {
-  const blogs = await Blog.find({})
-  return blogs.map(b => b.toJSON())
-}
-
 const usersInDb = async () => {
   const users = await User.find({})
   return users.map(u => u.toJSON())
 }
 
+const blogsInDb = async () => {
+  const blogs = await Blog.find({})
+  return blogs.map(b => b.toJSON())
+}
+
 module.exports = {
-  initialBlogs, nonExistingId, blogsInDb, usersInDb
+  nonExistingId, blogsInDb, usersInDb, initialUsers, initialBlogs
 }

@@ -12,6 +12,10 @@ usersRouter.post('/', async (request, response) => {
 
     const saltRounds = 10
 
+    if(!username){
+        return response.status(404).json({error: 'resource not found'})
+    }
+
     if(username.length < 4 || password.length < 4){
        return response.status(400).json({error: 'ValidationError'})
     }
