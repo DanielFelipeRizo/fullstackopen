@@ -53,6 +53,11 @@ const App = () => {
           setNotificationMessage([`Added '${returnedContact.name}'`, 'success'])
           setTimeout(() => { setNotificationMessage([null, null]) }, 3000)
         })
+        .catch(error => {
+          console.log(error)
+          const errorMsj = error.response.data.error
+          setNotificationMessage([errorMsj, 'error'])
+        })
     }
   }
 
@@ -81,9 +86,10 @@ const App = () => {
     contactService.deleteContact(id)
       .then(
         (res) => {
-          if (res.status == 200) {
+          if (res.status == 204) {
             setContacts(contacts.filter(p => p.id !== id))
-            alert(`deleted`)
+            setNotificationMessage([`deleted`, 'success'])
+            setTimeout(() => { setNotificationMessage([null, null]) }, 2000)
           }
         }
       )
