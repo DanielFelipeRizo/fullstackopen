@@ -5,6 +5,7 @@ import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Togglable'
 import '../index.css'
 
 const App = () => {
@@ -81,11 +82,14 @@ const App = () => {
         <h2>blogs</h2>
         <p>{user.name} logged in</p>
         <button type="button" onClick={handleLogout}>logout</button>
-        <BlogForm
-          setNotificationMessage={setNotificationMessage}
-          blogs={blogs}
-          setBlogs={setBlogs}
-        />
+
+        <Togglable buttonlabel='new blog'>
+          <BlogForm
+            setNotificationMessage={setNotificationMessage}
+            blogs={blogs}
+            setBlogs={setBlogs}
+          />
+        </Togglable>
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
