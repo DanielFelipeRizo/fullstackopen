@@ -63,10 +63,19 @@ blogsRouter.put('/:id', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
   const idToDelete = request.params.id
+  
   const blogToDelete = await Blog.findById(idToDelete)
+  console.log('request.user');
+  console.log(request.user);
+  
+  if (!request.user) {
+    return response.status(400).json({ error: 'user or token invalid' })
+  }
+
   if (!request.user.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
+
   if (blogToDelete) {
     if (blogToDelete.user.toString() === request.user.id) {
       await Blog.findByIdAndDelete(idToDelete)

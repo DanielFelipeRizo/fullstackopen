@@ -65,6 +65,8 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogsappUser')
   }
 
+  const blogsSortedByLikes = blogs.sort((a, b) => b.likes - a.likes)
+
   return (
     <div>
       <h2>welcome to blogs</h2>
@@ -96,8 +98,9 @@ const App = () => {
             setBlogs={setBlogs}
           />
         </Togglable>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} setNotificationMessage={setNotificationMessage} />
+
+        {blogsSortedByLikes.map(blog =>
+          <Blog key={blog.id} blog={blog} setNotificationMessage={setNotificationMessage} blogs={blogs} setBlogs={setBlogs} />
         )}
       </div>
       }
