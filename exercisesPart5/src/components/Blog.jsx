@@ -1,6 +1,5 @@
 import { useState, useImperativeHandle, forwardRef } from 'react'
 import blogService from '../services/blogs'
-import blogs from '../services/blogs'
 
 const Blog = ({ blog, setNotificationMessage, blogs, setBlogs }) => {
 
@@ -31,10 +30,10 @@ const Blog = ({ blog, setNotificationMessage, blogs, setBlogs }) => {
       if (responseUpdateBlog.data) {
         setNotificationMessage({ msj: 'update like success', type: 'success' })
         setTimeout(() => { setNotificationMessage({ msj: null, type: null }) }, 3000)
-        setBlogs([...blogs]);
+        setBlogs([...blogs])
       }
     } catch (error) {
-      console.log('error:', error);
+      console.log('error:', error)
       setNotificationMessage({ msj: 'update error', type: 'error' })
       setTimeout(() => { setNotificationMessage({ msj: null, type: null }) }, 3000)
     }
@@ -55,7 +54,7 @@ const Blog = ({ blog, setNotificationMessage, blogs, setBlogs }) => {
       }
 
     } catch (error) {
-      console.log('error:', error);
+      console.log('error:', error)
       setNotificationMessage({ msj: 'elimination error', type: 'error' })
       setTimeout(() => { setNotificationMessage({ msj: null, type: null }) }, 3000)
     }

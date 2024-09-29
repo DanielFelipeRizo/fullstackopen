@@ -13,7 +13,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
   const [messageAndType, setNotificationMessage] = useState({ msj: null, type: null })
 
   useEffect(() => {
@@ -73,15 +72,13 @@ const App = () => {
       <Notification messageAndType={messageAndType} />
 
       {!user &&
-        <Togglable buttonlabel='log in'>
+        <Togglable buttonLabel='log in'>
           <LoginForm
             handleLogin={handleLogin}
             username={username}
             setUsername={setUsername}
             password={password}
             setPassword={setPassword}
-            loginVisible={loginVisible}
-            setLoginVisible={setLoginVisible}
           />
         </Togglable>
       }
@@ -91,7 +88,7 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button type="button" onClick={handleLogout}>logout</button>
 
-        <Togglable buttonlabel='new blog'>
+        <Togglable buttonLabel='new blog'>
           <BlogForm
             setNotificationMessage={setNotificationMessage}
             blogs={blogs}
