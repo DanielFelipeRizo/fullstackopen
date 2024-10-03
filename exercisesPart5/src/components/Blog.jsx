@@ -60,11 +60,11 @@ const Blog = ({ blog, setNotificationMessage, blogs, setBlogs }) => {
     }
   }
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       title: {blog.title},
       author: {blog.author}
       <button onClick={() => handleView(blog.title)}>{showDetails ? 'hide' : 'show'}</button>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className='blogDetails'>
         url : {blog.url} <br></br>
         likes: {blog.likes} <button onClick={() => handleUpdateLikesBlog()}>like</button><br></br>
         user: {blog.user.name}<br></br>
