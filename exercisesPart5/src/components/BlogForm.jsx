@@ -1,9 +1,5 @@
-import React, { useState } from 'react'
-import blogService from '../services/blogs'
 
-const BlogForm = ({ setNotificationMessage, blogs, setBlogs }) => {
-
-  const [blog, setBlog] = useState({ title: '', author: '', url: '', likes: 0, user: '' })
+const BlogForm = ({ blog, setBlog, handleCreateBlog }) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -11,28 +7,6 @@ const BlogForm = ({ setNotificationMessage, blogs, setBlogs }) => {
       ...blog,
       [name]: value
     })
-  }
-
-  const handleCreateBlog = async (event) => {
-    event.preventDefault()
-
-    try {
-      const responseCreateBlog = await blogService.create(blog)
-      console.log('responseCreateBlog')
-      console.log(responseCreateBlog)
-
-      if (responseCreateBlog) {
-        setNotificationMessage({ msj: 'creation success', type: 'success' })
-        setTimeout(() => { setNotificationMessage({ msj: null, type: null }) }, 3000)
-
-        setBlogs(blogs.concat(responseCreateBlog))
-        setBlog({ title: '', author: '', url: '', likes: 0, user: '' })
-      }
-    } catch (error) {
-      console.log('error:', error)
-      setNotificationMessage({ msj: 'creation error', type: 'error' })
-      setTimeout(() => { setNotificationMessage({ msj: null, type: null }) }, 3000)
-    }
   }
 
   return (
@@ -79,7 +53,7 @@ const BlogForm = ({ setNotificationMessage, blogs, setBlogs }) => {
           />
         </div>
 
-        <button type="submit">add</button>
+        <button id="buttonOnSubmitBlogForm" type="submit">add</button>
       </form>
     </div>
   )
