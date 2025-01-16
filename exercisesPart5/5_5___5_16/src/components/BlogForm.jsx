@@ -16,7 +16,6 @@ const BlogForm = ({ blog, setBlog, handleCreateBlog }) => {
         <div>
           title: &nbsp;
           <input
-            data-testid='title'
             type="text"
             value={blog.title}
             name="title"
@@ -27,7 +26,6 @@ const BlogForm = ({ blog, setBlog, handleCreateBlog }) => {
         <div>
           author: &nbsp;
           <input
-            data-testid='author'
             type="text"
             value={blog.author}
             name="author"
@@ -38,7 +36,6 @@ const BlogForm = ({ blog, setBlog, handleCreateBlog }) => {
         <div>
           url: &nbsp;
           <input
-            data-testid='url'
             type="text"
             value={blog.url}
             name="url"
@@ -49,7 +46,6 @@ const BlogForm = ({ blog, setBlog, handleCreateBlog }) => {
         <div>
           likes: &nbsp;
           <input
-            data-testid='likes'
             type="number"
             value={blog.likes}
             name="likes"

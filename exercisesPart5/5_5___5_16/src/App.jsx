@@ -129,8 +129,8 @@ const App = () => {
       }
 
     } catch (error) {
-
-      setNotificationMessage({ msj: 'failed elimination', type: 'error' })
+      console.log('error:', error)
+      setNotificationMessage({ msj: 'elimination error', type: 'error' })
       setTimeout(() => { setNotificationMessage({ msj: null, type: null }) }, 3000)
     }
   }
@@ -171,7 +171,6 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            user={user}
             handleUpdateLikesBlog={() => handleUpdateLikesBlog(blog)}
             handleDeleteBlog={() => handleDeleteBlog(blog)}
           />
