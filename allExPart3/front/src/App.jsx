@@ -104,7 +104,7 @@ const App = () => {
 
   const handleInputFilterChange = (event) => setFilter(event.target.value)
 
-  const handleButtonCleanClick = () => setFilter('');
+  const handleButtonCleanClick = () => setFilter('')
 
   return (
     <div>

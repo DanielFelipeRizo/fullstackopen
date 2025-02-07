@@ -1,6 +1,6 @@
 const Contact = ({ contacts, strFilter, deleteContact }) => {
     //obtiene una lista de contactos que contienen el filtro, por nombre
-    const contactsFilter = contacts.filter(c => c.name.toLowerCase().includes(strFilter.toLowerCase()));
+    const contactsFilter = contacts.filter(c => c.name.toLowerCase().includes(strFilter.toLowerCase()))
     //console.log(contactsFilter);
     return(
         <div>
