@@ -42,6 +42,8 @@ const AnecdoteList = ( ) => {
   }
 
   const anecdotes = result.data
+console.log('anecdotes');
+console.log(anecdotes);
 
   return (
     <div>
