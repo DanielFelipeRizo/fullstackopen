@@ -40,6 +40,9 @@ const App = () => {
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
   }
 
+  console.log(notification.length < 1);
+
+
   return (
     <div>
       <h1>Software anecdotes</h1>
