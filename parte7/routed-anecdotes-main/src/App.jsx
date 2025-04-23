@@ -42,7 +42,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Software anecdotes</h1>
+      <h1>Anecdotes</h1>
       <Menu />
       <Notification message={notification} />
       <Routes>
@@ -53,6 +53,8 @@ const App = () => {
           element={notification.length < 1 ?
             <CreateNew addNew={addNew} /> :
             <Navigate replace to='/' />} />
+        {/* <Route path='/create' element={<CreateNew addNew={addNew}/>} /> */}
+
       </Routes>
       <Footer />
     </div>
