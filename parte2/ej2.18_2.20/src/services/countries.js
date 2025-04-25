@@ -25,7 +25,7 @@ const deleteContact = (id) => {
 const getWeatherInfo = (latlngCountry) => {
 
     const api_key = import.meta.env.VITE_SOME_KEY_OPEN_WEATHER_MAP
-    console.log(api_key);
+    // console.log(api_key);
 
     const latitude = latlngCountry[0]
     const longitude = latlngCountry[1]
