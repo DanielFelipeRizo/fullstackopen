@@ -23,12 +23,6 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  // const [notificationProperties, setNotificationMessage] =
-  //   useState({
-  //     msj: null,
-  //     type: null,
-  //     timeOut: 0,
-  //   });
 
   const dispatch = useDispatch();
 
@@ -66,10 +60,6 @@ const App = () => {
       dispatch(
         setNotification({ msj: "login success", type: "success", seconds: 5 }),
       );
-      // setNotificationMessage({ msj: "login success", type: "success" });
-      // setTimeout(() => {
-      //   setNotificationMessage({ msj: null, type: null });
-      // }, 3000);
     } catch (exception) {
       console.log("exception");
       console.log(exception);
@@ -77,11 +67,6 @@ const App = () => {
       dispatch(
         setNotification({ msj: "failed login", type: "error", seconds: 5 }),
       );
-
-      // setNotificationMessage({ msj: "failed login", type: "error" });
-      // setTimeout(() => {
-      //   setNotificationMessage({ msj: null, type: null });
-      // }, 3000);
     }
   };
 
@@ -100,11 +85,9 @@ const App = () => {
       // console.log(responseCreateBlog)
 
       if (responseCreateBlog) {
-        // setNotificationMessage({ msj: "creation success", type: "success" });
-        // setTimeout(() => {
-        //   setNotificationMessage({ msj: null, type: null });
-        // }, 3000);
-
+        dispatch(
+          setNotification({ msj: "creation success", type: "success", seconds: 5 })
+        );
         // Asignar el usuario actual al blog creado
         const blogWithUser = { ...responseCreateBlog, user: { ...user } };
 
@@ -116,11 +99,9 @@ const App = () => {
         setBlogForm({ title: "", author: "", url: "", likes: 0, user: "" });
       }
     } catch (error) {
-      // console.log("error:", error);
-      // setNotificationMessage({ msj: "creation error", type: "error" });
-      // setTimeout(() => {
-      //   setNotificationMessage({ msj: null, type: null });
-      // }, 3000);
+      dispatch(
+        setNotification({ msj: "creation error", type: "error", seconds: 5 })
+      );
     }
   };
 
@@ -134,18 +115,14 @@ const App = () => {
           setNotification({ msj: "update like success", type: "success", seconds: 5 }),
         );
         console.log('estado: ', store.getState())
-        // setNotificationMessage({ msj: "update like success", type: "success" });
-        // setTimeout(() => {
-        //   setNotificationMessage({ msj: null, type: null });
-        // }, 3000);
+
         setBlogs([...blogs]);
       }
     } catch (error) {
       console.log("error:", error);
-      // setNotificationMessage({ msj: "update error", type: "error" });
-      // setTimeout(() => {
-      //   setNotificationMessage({ msj: null, type: null });
-      // }, 3000);
+      dispatch(
+        setNotification({ msj: "update error", type: "error", seconds: 5 })
+      );
     }
   };
 
@@ -157,21 +134,16 @@ const App = () => {
         const responseDeleteBlog = await blogService.deleteBlog(blog.id);
 
         if (responseDeleteBlog && responseDeleteBlog.status === 204) {
-          // setNotificationMessage({
-          //   msj: "successful elimination",
-          //   type: "success",
-          // });
-          // setTimeout(() => {
-          //   setNotificationMessage({ msj: null, type: null });
-          // }, 3000);
           setBlogs(blogs.filter((b) => b.id !== blog.id));
+          dispatch(
+            setNotification({ msj: "successful elimination", type: "success", seconds: 5 })
+          );
         }
       }
     } catch (error) {
-      // setNotificationMessage({ msj: "failed elimination", type: "error" });
-      // setTimeout(() => {
-      //   setNotificationMessage({ msj: null, type: null });
-      // }, 3000);
+      dispatch(
+        setNotification({ msj: "failed elimination", type: "error", seconds: 5 })
+      );
     }
   };
 
