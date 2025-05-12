@@ -6,9 +6,9 @@ let token = null;
 const setToken = (newToken) => {
   token = `Bearer ${newToken}`;
 };
-const getAll = () => {
-  const request = axios.get(baseUrl);
-  return request.then((response) => response.data);
+const getAll = async () => {
+  const response = await axios.get(baseUrl);
+  return response.data;
 };
 
 const create = async (newObject) => {
@@ -26,11 +26,10 @@ const update = async (id, newObject) => {
 };
 
 const updateLikes = async (id, newObject) => {
+  
   const objectUpdated = { ...newObject, likes: newObject.likes + 1 };
   const response = await axios.put(`${ baseUrl }/${id}`, objectUpdated)
   return response.data
-  // const response = await axios.put(`${baseUrl}/${id}`, newObject);
-  // return response;
 };
 
 const deleteBlog = async (id) => {

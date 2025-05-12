@@ -13,8 +13,6 @@ const Blog = () => {
     return state.blogs;
   });
 
-  console.log("visibleDetails", visibleDetails);
-
   //estilos en linea
   const blogStyle = {
     paddingTop: 10,
@@ -30,7 +28,7 @@ const Blog = () => {
   const showWhenVisibleDeleteButton = { display: "" };
 
   const handleUpdateLikesBlog = (blog) => {
-    dispatch(updateLikes(blog));
+    dispatch(updateLikes(blog.id, blog));
     dispatch(
       setNotification({
         msj: `you liked '${blog.title}'`,
@@ -41,7 +39,10 @@ const Blog = () => {
   };
 
   const handleDeleteBlog = (blog) => {
-    deleteBlogObj(blog.id);
+    dispatch(
+      deleteBlogObj(blog.id)
+    );
+
     dispatch(
       setNotification({
         msj: `you deleted '${blog.title}'`,
@@ -51,10 +52,6 @@ const Blog = () => {
     );
   };
 
-  // const handleView = (title) => {
-  //   console.log('click in', title)
-  //   setShowDetails(!showDetails);
-  // };
   const handleView = (id) => {
     setVisibleDetails((prev) => ({
       ...prev,

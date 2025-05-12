@@ -23,8 +23,12 @@ const BlogForm = () => {
 
     dispatch(createBlog(blogObject));
 
+    title.resetvalue();
+    author.resetvalue();
+    url.resetvalue();
+    likes.resetvalue();
+
     dispatch(
-      // setNotification(`a new blog ${title} by ${author} added`, 5)
       setNotification({
         msj: `a new blog ${title.value} by ${author.value} added`,
         type: "success",

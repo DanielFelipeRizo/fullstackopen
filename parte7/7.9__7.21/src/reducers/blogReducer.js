@@ -33,14 +33,11 @@ const blogSlice = createSlice({
 export const initializeBlogs = () => {
   return async (dispatch) => {
     const blogs = await blogService.getAll()
-    console.log('blogs desde reducer', blogs);
-    
     dispatch(setBlogs(blogs))
   }
 }
 
 export const createBlog = (blogObject) => {
-  console.log('content:', blogObject);
   
   return async (dispatch) => {
     const newblog = await blogService.create(blogObject)
@@ -48,9 +45,9 @@ export const createBlog = (blogObject) => {
   }
 }
 
-export const updateLikes = (blogObject) => {
+export const updateLikes = (id, blogObject) => {
   return async (dispatch) => {
-    const updatedblog = await blogService.updateLikes(blogObject)
+    const updatedblog = await blogService.updateLikes(id, blogObject)
     dispatch(addLikeBlog(updatedblog.id))
   }
 }
