@@ -1,58 +1,56 @@
-const BlogForm = ({ blog, setBlog, handleCreateBlog }) => {
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setBlog({
-      ...blog,
-      [name]: value,
-    });
+import { useDispatch } from "react-redux";
+import { createBlog } from "../reducers/blogReducer";
+import { setNotification } from "../reducers/notificationReducer";
+import useField from "../hooks/useField";
+
+const BlogForm = () => {
+  const dispatch = useDispatch();
+
+  const title = useField("text");
+  const author = useField("text");
+  const url = useField("text");
+  const likes = useField("number");
+
+  const addBlog = async (event) => {
+    event.preventDefault();
+
+    const blogObject = {
+      title: title.value,
+      author: author.value,
+      url: url.value,
+      likes: likes.value,
+    };
+
+    dispatch(createBlog(blogObject));
+
+    dispatch(
+      // setNotification(`a new blog ${title} by ${author} added`, 5)
+      setNotification({
+        msj: `a new blog ${title.value} by ${author.value} added`,
+        type: "success",
+        seconds: 5,
+      }),
+    );
   };
 
   return (
     <div>
       <h2>add blogs</h2>
-      <form onSubmit={handleCreateBlog}>
+      <form onSubmit={addBlog}>
         <div>
-          title: &nbsp;
-          <input
-            data-testid="title"
-            type="text"
-            value={blog.title}
-            name="title"
-            onChange={handleChange}
-          />
+          title: <input {...title} />
         </div>
 
         <div>
-          author: &nbsp;
-          <input
-            data-testid="author"
-            type="text"
-            value={blog.author}
-            name="author"
-            onChange={handleChange}
-          />
+          author: <input {...author} />
         </div>
 
         <div>
-          url: &nbsp;
-          <input
-            data-testid="url"
-            type="text"
-            value={blog.url}
-            name="url"
-            onChange={handleChange}
-          />
+          url: <input {...url} />
         </div>
 
         <div>
-          likes: &nbsp;
-          <input
-            data-testid="likes"
-            type="number"
-            value={blog.likes}
-            name="likes"
-            onChange={handleChange}
-          />
+          likes: <input {...likes} />
         </div>
 
         <button id="buttonOnSubmitBlogForm" type="submit">

@@ -8,18 +8,11 @@ import loginService from "./services/login";
 import Togglable from "./components/Togglable";
 import { useDispatch } from "react-redux";
 import { setNotification } from "./reducers/notificationReducer";
-import store from './store/store'
-import '../index.css';
+import "../index.css";
+import { initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
-  const [blogForm, setBlogForm] = useState({
-    title: "",
-    author: "",
-    url: "",
-    likes: 0,
-    user: "",
-  });
-  const [blogs, setBlogs] = useState([]);
+  // const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
@@ -35,13 +28,11 @@ const App = () => {
     }
   }, []);
 
+
   useEffect(() => {
-    const getAllBlogs = async () => {
-      const blogs = await blogService.getAll();
-      setBlogs(blogs);
-    };
-    getAllBlogs();
-  }, []);
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -75,79 +66,77 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogsappUser");
   };
 
-  const handleCreateBlog = async (event) => {
-    event.preventDefault();
+  // const handleCreateBlog = async (event) => {
+  //   event.preventDefault();
 
-    try {
-      const responseCreateBlog = await blogService.create(blogForm);
+  //   try {
+  //     const responseCreateBlog = await blogService.create(blogForm);
 
-      // console.log('respuesta')
-      // console.log(responseCreateBlog)
+  //     // console.log('respuesta')
+  //     // console.log(responseCreateBlog)
 
-      if (responseCreateBlog) {
-        dispatch(
-          setNotification({ msj: "creation success", type: "success", seconds: 5 })
-        );
-        // Asignar el usuario actual al blog creado
-        const blogWithUser = { ...responseCreateBlog, user: { ...user } };
+  //     if (responseCreateBlog) {
+  //       dispatch(
+  //         setNotification({ msj: "creation success", type: "success", seconds: 5 })
+  //       );
+  //       // Asignar el usuario actual al blog creado
+  //       const blogWithUser = { ...responseCreateBlog, user: { ...user } };
 
-        // Actualizar el estado con el blog modificado
-        setBlogs(blogs.concat(blogWithUser));
+  //       // Actualizar el estado con el blog modificado
+  //       setBlogs(blogs.concat(blogWithUser));
 
-        //setBlogs(blogs.concat(responseCreateBlog))
+  //       //setBlogs(blogs.concat(responseCreateBlog))
 
-        setBlogForm({ title: "", author: "", url: "", likes: 0, user: "" });
-      }
-    } catch (error) {
-      dispatch(
-        setNotification({ msj: "creation error", type: "error", seconds: 5 })
-      );
-    }
-  };
+  //       setBlogForm({ title: "", author: "", url: "", likes: 0, user: "" });
+  //     }
+  //   } catch (error) {
+  //     dispatch(
+  //       setNotification({ msj: "creation error", type: "error", seconds: 5 })
+  //     );
+  //   }
+  // };
 
-  const handleUpdateLikesBlog = async (blog) => {
-    try {
-      blog.likes = blog.likes + 1;
-      const responseUpdateBlog = await blogService.update(blog.id, blog);
+  // const handleUpdateLikesBlog = async (blog) => {
+  //   try {
+  //     blog.likes = blog.likes + 1;
+  //     const responseUpdateBlog = await blogService.update(blog.id, blog);
 
-      if (responseUpdateBlog.data) {
-        dispatch(
-          setNotification({ msj: "update like success", type: "success", seconds: 5 }),
-        );
-        console.log('estado: ', store.getState())
+  //     if (responseUpdateBlog.data) {
+  //       dispatch(
+  //         setNotification({ msj: "update like success", type: "success", seconds: 5 }),
+  //       );
+  //       console.log('estado: ', store.getState())
 
-        setBlogs([...blogs]);
-      }
-    } catch (error) {
-      console.log("error:", error);
-      dispatch(
-        setNotification({ msj: "update error", type: "error", seconds: 5 })
-      );
-    }
-  };
+  //       setBlogs([...blogs]);
+  //     }
+  //   } catch (error) {
+  //     console.log("error:", error);
+  //     dispatch(
+  //       setNotification({ msj: "update error", type: "error", seconds: 5 })
+  //     );
+  //   }
+  // };
 
-  const handleDeleteBlog = async (blog) => {
-    try {
-      if (
-        window.confirm(`Do you really want to delete the blog?: ${blog.title}`)
-      ) {
-        const responseDeleteBlog = await blogService.deleteBlog(blog.id);
+  // const handleDeleteBlog = async (blog) => {
+  //   try {
+  //     if (
+  //       window.confirm(`Do you really want to delete the blog?: ${blog.title}`)
+  //     ) {
+  //       const responseDeleteBlog = await blogService.deleteBlog(blog.id);
 
-        if (responseDeleteBlog && responseDeleteBlog.status === 204) {
-          setBlogs(blogs.filter((b) => b.id !== blog.id));
-          dispatch(
-            setNotification({ msj: "successful elimination", type: "success", seconds: 5 })
-          );
-        }
-      }
-    } catch (error) {
-      dispatch(
-        setNotification({ msj: "failed elimination", type: "error", seconds: 5 })
-      );
-    }
-  };
-
-  const blogsSortedByLikes = blogs.sort((a, b) => b.likes - a.likes);
+  //       if (responseDeleteBlog && responseDeleteBlog.status === 204) {
+  //         setBlogs(blogs.filter((b) => b.id !== blog.id));
+  //         dispatch(
+  //           setNotification({ msj: "successful elimination", type: "success", seconds: 5 })
+  //         );
+  //       }
+  //     }
+  //   } catch (error) {
+  //     dispatch(
+  //       setNotification({ msj: "failed elimination", type: "error", seconds: 5 })
+  //     );
+  //   }
+  // };
 
   return (
     <div>
@@ -175,22 +164,10 @@ const App = () => {
           </button>
 
           <Togglable buttonLabel="new blog">
-            <BlogForm
-              handleCreateBlog={handleCreateBlog}
-              blog={blogForm}
-              setBlog={setBlogForm}
-            />
+            <BlogForm />
           </Togglable>
 
-          {blogsSortedByLikes.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              user={user}
-              handleUpdateLikesBlog={() => handleUpdateLikesBlog(blog)}
-              handleDeleteBlog={() => handleDeleteBlog(blog)}
-            />
-          ))}
+          <Blog user={user} />
         </div>
       )}
     </div>

@@ -25,6 +25,14 @@ const update = async (id, newObject) => {
   return response;
 };
 
+const updateLikes = async (id, newObject) => {
+  const objectUpdated = { ...newObject, likes: newObject.likes + 1 };
+  const response = await axios.put(`${ baseUrl }/${id}`, objectUpdated)
+  return response.data
+  // const response = await axios.put(`${baseUrl}/${id}`, newObject);
+  // return response;
+};
+
 const deleteBlog = async (id) => {
   const config = {
     headers: { Authorization: token },
@@ -34,4 +42,4 @@ const deleteBlog = async (id) => {
   return response;
 };
 
-export default { setToken, getAll, create, update, deleteBlog };
+export default { setToken, getAll, create, update, updateLikes, deleteBlog };
