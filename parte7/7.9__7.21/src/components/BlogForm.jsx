@@ -23,10 +23,10 @@ const BlogForm = () => {
 
     dispatch(createBlog(blogObject));
 
-    title.resetvalue();
-    author.resetvalue();
-    url.resetvalue();
-    likes.resetvalue();
+    title.onReset();
+    author.onReset();
+    url.onReset();
+    likes.onReset();
 
     dispatch(
       setNotification({

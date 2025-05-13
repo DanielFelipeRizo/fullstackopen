@@ -12,7 +12,7 @@ import "../index.css";
 import { initializeBlogs } from "./reducers/blogReducer";
 
 const App = () => {
-  // const [blogs, setBlogs] = useState([]);
+  
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);

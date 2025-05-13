@@ -1,25 +1,22 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 const useField = (type) => {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState("");
 
   const onChange = (event) => {
-    setValue(event.target.value)
-  }
+    setValue(event.target.value);
+  };
 
-  const resetvalue = () => {
-    if(type === 'number')
-      setValue(0)
-    else
-      setValue('')
-  }
+  const onReset = () => {
+    setValue('');
+  };
 
   return {
     type,
     value,
     onChange,
-    resetvalue
-  }
-}
+    onReset,
+  };
+};
 
-export default useField
+export default useField;
