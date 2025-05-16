@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { setNotification } from "./reducers/notificationReducer";
 import "../index.css";
 import { initializeBlogs } from "./reducers/blogReducer";
+import { initializeUserFromStorage } from "./reducers/authSlice";
 
 const App = () => {
   
@@ -20,17 +21,12 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogsappUser");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
+    dispatch(initializeUserFromStorage());
+  }, [dispatch]);
 
 
   useEffect(() => {
-    dispatch(initializeBlogs())
+    dispatch(initializeBlogs());
   }, [dispatch])
 
 
