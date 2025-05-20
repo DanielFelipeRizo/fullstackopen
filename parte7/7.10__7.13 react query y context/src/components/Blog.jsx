@@ -1,13 +1,14 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 import { updateLikes } from "../reducers/blogReducer";
 import { deleteBlogObj } from "../reducers/blogReducer";
-import { setNotification } from "../reducers/notificationReducer";
+import { useNotificationDispatch } from '../NotificationContext'
 
 const Blog = () => {
   const [visibleDetails, setVisibleDetails] = useState({});
 
   const dispatch = useDispatch();
+  const notificationDispatch = useNotificationDispatch();
 
   const blogs = useSelector((state) => {
     return state.blogs;
@@ -29,13 +30,17 @@ const Blog = () => {
 
   const handleUpdateLikesBlog = (blog) => {
     dispatch(updateLikes(blog.id, blog));
-    dispatch(
-      setNotification({
-        msj: `you liked '${blog.title}'`,
-        type: "success",
-        seconds: 5,
-      }),
-    );
+
+    notificationDispatch({ type: "SET_NOTIFICATION", payload: `you liked '${blog.title}'`, style: "success" })
+    setTimeout(() => { notificationDispatch({ type: "CLEAR_NOTIFICATION" }) }, 5000)
+
+    // dispatch(
+    //   setNotification({
+    //     msj: `you liked '${blog.title}'`,
+    //     type: "success",
+    //     seconds: 5,
+    //   }),
+    // );
   };
 
   const handleDeleteBlog = (blog) => {
@@ -43,13 +48,15 @@ const Blog = () => {
       deleteBlogObj(blog.id)
     );
 
-    dispatch(
-      setNotification({
-        msj: `you deleted '${blog.title}'`,
-        type: "success",
-        seconds: 5,
-      }),
-    );
+    notificationDispatch({ type: "SET_NOTIFICATION", payload: `you deleted '${blog.title}'` })
+    setTimeout(() => { notificationDispatch({ type: "CLEAR_NOTIFICATION" }) }, 5000)
+    // dispatch(
+    //   setNotification({
+    //     msj: `you deleted '${blog.title}'`,
+    //     type: "success",
+    //     seconds: 5,
+    //   }),
+    // );
   };
 
   const handleView = (id) => {

@@ -28,13 +28,16 @@ const BlogForm = () => {
     url.onReset();
     likes.onReset();
 
-    dispatch(
-      setNotification({
-        msj: `a new blog ${title.value} by ${author.value} added`,
-        type: "success",
-        seconds: 5,
-      }),
-    );
+    notificationDispatch({ type: "SET_NOTIFICATION", payload: `a new blog ${title.value} by ${author.value} added` })
+    setTimeout(() => { notificationDispatch({ type: "CLEAR_NOTIFICATION" }) }, 5000)
+
+    // dispatch(
+    //   setNotification({
+    //     msj: `a new blog ${title.value} by ${author.value} added`,
+    //     type: "success",
+    //     seconds: 5,
+    //   }),
+    // );
   };
 
   return (
