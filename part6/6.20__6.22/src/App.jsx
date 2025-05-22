@@ -13,16 +13,16 @@ const App = () => {
     refetchOnWindowFocus: false,
     retry: false
   })
-  
+
   const updateAnecdoteMutation = useMutation({
     mutationFn: updateAnecdote,
     onSuccess: (anecdoteUpdated) => {
-      const anecdotes = queryClient.getQueryData( ['anecdotes'] )
-      queryClient.setQueryData(['anecdotes'], 
-        anecdotes.map(anecdote => anecdote.id === anecdoteUpdated.id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote )
+      const anecdotes = queryClient.getQueryData(['anecdotes'])
+      queryClient.setQueryData(['anecdotes'],
+        anecdotes.map(anecdote => anecdote.id === anecdoteUpdated.id ? { ...anecdote, votes: anecdote.votes + 1 } : anecdote)
       )
     }
-})
+  })
 
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 })
@@ -32,7 +32,7 @@ const App = () => {
     return <span>Error: anecdote service not available due to problems in server.</span>
   }
 
-  if ( result.isLoading ) {
+  if (result.isLoading) {
     return <div>loading data...</div>
   }
 
@@ -41,10 +41,10 @@ const App = () => {
   return (
     <div>
       <h3>Anecdote app</h3>
-    
-      <Notification/>
-      <AnecdoteForm/>
-    
+
+      <Notification />
+      <AnecdoteForm />
+
       {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>

@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogService from "../services/blogs";
 import loginService from "../services/login";
-import { setNotification } from "../reducers/notificationReducer";
 
 const authSlice = createSlice({
   name: "auth",
@@ -15,6 +14,7 @@ const authSlice = createSlice({
     },
   },
 });
+
 
 export const initializeUserFromStorage = () => {
   return (dispatch) => {
@@ -40,17 +40,13 @@ export const loginUser = ({ username, password }) => {
 
       blogService.setToken(user.token);
       dispatch(setUser(user));
+      
+      return "success";
 
-      dispatch(
-        setNotification({ msj: "login success", type: "success", seconds: 5 }),
-      );
     } catch (exception) {
-      console.log("exception");
-      console.log(exception);
 
-      dispatch(
-        setNotification({ msj: "failed login", type: "error", seconds: 5 }),
-      );
+      return exception;
+
     }
   };
 };

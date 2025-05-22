@@ -4,15 +4,30 @@ import { updateLikes } from "../reducers/blogReducer";
 import { deleteBlogObj } from "../reducers/blogReducer";
 import { useNotificationDispatch } from '../NotificationContext'
 
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import blogService from '../services/blogs'
+
 const Blog = () => {
+
+  // const queryClient = useQueryClient();
+
+
+  const resultGetBlogs = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+    refetchOnWindowFocus: false,
+    retry: false
+  })
+
+
   const [visibleDetails, setVisibleDetails] = useState({});
 
   const dispatch = useDispatch();
   const notificationDispatch = useNotificationDispatch();
 
-  const blogs = useSelector((state) => {
-    return state.blogs;
-  });
+  // const blogs = useSelector((state) => {
+  //   return state.blogs;
+  // });
 
   //estilos en linea
   const blogStyle = {
@@ -31,33 +46,18 @@ const Blog = () => {
   const handleUpdateLikesBlog = (blog) => {
     dispatch(updateLikes(blog.id, blog));
 
-    notificationDispatch({ type: "SET_NOTIFICATION", payload: `you liked '${blog.title}'`, style: "success" })
+    notificationDispatch({ type: "SET_NOTIFICATION", payload: { text: `you liked '${blog.title}'`, style: "success" } })
     setTimeout(() => { notificationDispatch({ type: "CLEAR_NOTIFICATION" }) }, 5000)
-
-    // dispatch(
-    //   setNotification({
-    //     msj: `you liked '${blog.title}'`,
-    //     type: "success",
-    //     seconds: 5,
-    //   }),
-    // );
   };
 
-  const handleDeleteBlog = (blog) => {
-    dispatch(
-      deleteBlogObj(blog.id)
-    );
+  // const handleDeleteBlog = (blog) => {
+  //   dispatch(
+  //     deleteBlogObj(blog.id)
+  //   );
 
-    notificationDispatch({ type: "SET_NOTIFICATION", payload: `you deleted '${blog.title}'` })
-    setTimeout(() => { notificationDispatch({ type: "CLEAR_NOTIFICATION" }) }, 5000)
-    // dispatch(
-    //   setNotification({
-    //     msj: `you deleted '${blog.title}'`,
-    //     type: "success",
-    //     seconds: 5,
-    //   }),
-    // );
-  };
+  //   notificationDispatch({ type: "SET_NOTIFICATION", payload: { text: `you deleted '${blog.title}'`, style: "success" } })
+  //   setTimeout(() => { notificationDispatch({ type: "CLEAR_NOTIFICATION" }) }, 5000)
+  // };
 
   const handleView = (id) => {
     setVisibleDetails((prev) => ({
@@ -70,6 +70,18 @@ const Blog = () => {
   // if (blog.user.username !== user.username) {
   //   showWhenVisibleDeleteButton.display = "none";
   // }
+
+  
+
+  if (resultGetBlogs.isError) {
+    return <span>Error: blog service not available due to problems in server.</span>
+  }
+
+  if (resultGetBlogs.isLoading) {
+    return <div>loading data...</div>
+  }
+
+  const blogs = resultGetBlogs.data;
 
   const blogsSortedByLikes = [...blogs].sort((a, b) => b.likes - a.likes);
 

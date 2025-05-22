@@ -7,8 +7,11 @@ import Togglable from "./components/Togglable";
 import { useDispatch, useSelector } from "react-redux";
 import "../index.css";
 import { initializeBlogs } from "./reducers/blogReducer";
-import { initializeUserFromStorage, loginUser } from "./reducers/authReducer";
-import { logout } from "./reducers/authReducer";
+import { initializeUserFromStorage, loginUser, logout } from "./reducers/authReducer";
+import { useNotificationDispatch } from './NotificationContext'
+
+// import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -17,18 +20,47 @@ const App = () => {
   const user = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
+  const notificationDispatch = useNotificationDispatch();
 
   useEffect(() => {
     dispatch(initializeUserFromStorage());
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(initializeBlogs());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(initializeBlogs());
+  // }, [dispatch]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    dispatch(loginUser({ username, password }));
+    const res = await dispatch(loginUser({ username, password }));
+
+    console.log(res);
+    
+
+
+    if (res === "success") {
+
+      notificationDispatch({
+        type: "SET_NOTIFICATION",
+        payload: { text: "login success", style: "success" },
+      });
+
+      setTimeout(() => {
+        notificationDispatch({ type: "CLEAR_NOTIFICATION" });
+      }, 5000);
+
+    } else {
+      notificationDispatch({
+        type: "SET_NOTIFICATION",
+        payload: { text: "failed login", style: "error" },
+      });
+
+      setTimeout(() => {
+        notificationDispatch({ type: "CLEAR_NOTIFICATION" });
+      }, 5000);
+
+    }
+
     setUsername("");
     setPassword("");
   };
