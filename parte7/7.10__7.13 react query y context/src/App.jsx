@@ -6,7 +6,6 @@ import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import { useDispatch, useSelector } from "react-redux";
 import "../index.css";
-import { initializeBlogs } from "./reducers/blogReducer";
 import { initializeUserFromStorage, loginUser, logout } from "./reducers/authReducer";
 import { useNotificationDispatch } from './NotificationContext'
 
@@ -26,9 +25,6 @@ const App = () => {
     dispatch(initializeUserFromStorage());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   dispatch(initializeBlogs());
-  // }, [dispatch]);
 
   const handleLogin = async (event) => {
     event.preventDefault();

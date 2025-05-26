@@ -1,5 +1,3 @@
-import { useDispatch } from "react-redux";
-import { createBlog } from "../reducers/blogReducer";
 import useField from "../hooks/useField";
 import { useNotificationDispatch } from '../NotificationContext'
 
@@ -8,7 +6,7 @@ import blogService from '../services/blogs'
 
 
 const BlogForm = () => {
-  const dispatch = useDispatch();
+
 
   const queryClient = useQueryClient()
   const notificationDispatch = useNotificationDispatch();
@@ -38,7 +36,6 @@ const BlogForm = () => {
     };
 
     newBlogMutation.mutate(blogObject)
-    // dispatch(createBlog(blogObject));
 
     title.onReset();
     author.onReset();
@@ -52,7 +49,7 @@ const BlogForm = () => {
   return (
     <div>
       <h2>add blogs</h2>
-      <form onSubmit={addBlog}>
+      <form onSubmit={onCreateBlog}>
         <div>
           title: <input {...title} />
         </div>

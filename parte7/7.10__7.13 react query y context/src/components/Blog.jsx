@@ -1,33 +1,21 @@
-import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
-import { updateLikes } from "../reducers/blogReducer";
-import { deleteBlogObj } from "../reducers/blogReducer";
-import { useNotificationDispatch } from '../NotificationContext'
-
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import blogService from '../services/blogs'
+import { useNotificationDispatch } from "../NotificationContext";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import blogService from "../services/blogs";
 
 const Blog = () => {
-
-  // const queryClient = useQueryClient();
-
+  const queryClient = useQueryClient();
 
   const resultGetBlogs = useQuery({
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
     refetchOnWindowFocus: false,
-    retry: false
-  })
-
+    retry: false,
+  });
 
   const [visibleDetails, setVisibleDetails] = useState({});
 
-  const dispatch = useDispatch();
   const notificationDispatch = useNotificationDispatch();
-
-  // const blogs = useSelector((state) => {
-  //   return state.blogs;
-  // });
 
   //estilos en linea
   const blogStyle = {
@@ -43,21 +31,57 @@ const Blog = () => {
   });
   const showWhenVisibleDeleteButton = { display: "" };
 
-  const handleUpdateLikesBlog = (blog) => {
-    dispatch(updateLikes(blog.id, blog));
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.updateLikes,
+    onSuccess: (blogUpdated) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(
+        ["blogs"],
+        blogs.map((blog) =>
+          blog.id === blogUpdated.id
+            ? { ...blog, likes: blog.likes + 1 }
+            : blog,
+        ),
+      );
 
-    notificationDispatch({ type: "SET_NOTIFICATION", payload: { text: `you liked '${blog.title}'`, style: "success" } })
-    setTimeout(() => { notificationDispatch({ type: "CLEAR_NOTIFICATION" }) }, 5000)
+      notificationDispatch({
+        type: "SET_NOTIFICATION",
+        payload: { text: `you liked '${blogUpdated.title}'`, style: "success" },
+      });
+      setTimeout(() => {
+        notificationDispatch({ type: "CLEAR_NOTIFICATION" });
+      }, 5000);
+    },
+  });
+
+  const handleUpdateLikesBlog = (blog) => {
+    updateBlogMutation.mutate(blog);
   };
 
-  // const handleDeleteBlog = (blog) => {
-  //   dispatch(
-  //     deleteBlogObj(blog.id)
-  //   );
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.deleteBlog,
+    onSuccess: (_, deletedId) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
 
-  //   notificationDispatch({ type: "SET_NOTIFICATION", payload: { text: `you deleted '${blog.title}'`, style: "success" } })
-  //   setTimeout(() => { notificationDispatch({ type: "CLEAR_NOTIFICATION" }) }, 5000)
-  // };
+      queryClient.setQueryData(
+        ["blogs"],
+        blogs.filter((blog) => blog.id !== deletedId),
+      );
+
+      notificationDispatch({
+        type: "SET_NOTIFICATION",
+        payload: { text: "You deleted a blog", style: "success" },
+      });
+
+      setTimeout(() => {
+        notificationDispatch({ type: "CLEAR_NOTIFICATION" });
+      }, 5000);
+    },
+  });
+
+  const handleDeleteBlog = (blog) => {
+    deleteBlogMutation.mutate(blog.id);
+  };
 
   const handleView = (id) => {
     setVisibleDetails((prev) => ({
@@ -66,22 +90,23 @@ const Blog = () => {
     }));
   };
 
+  if (resultGetBlogs.isError) {
+    return (
+      <span>Error: blog service not available due to problems in server.</span>
+    );
+  }
+
+  if (resultGetBlogs.isLoading) {
+    return <div>loading data...</div>;
+  }
+
+  const blogs = resultGetBlogs.data;
+  
+  // blogs = blogs.map((blog) => {})
   //se encarga de ocultar el boton de eliminar si el usuario logueado no es el mismo que creo el blog
   // if (blog.user.username !== user.username) {
   //   showWhenVisibleDeleteButton.display = "none";
   // }
-
-  
-
-  if (resultGetBlogs.isError) {
-    return <span>Error: blog service not available due to problems in server.</span>
-  }
-
-  if (resultGetBlogs.isLoading) {
-    return <div>loading data...</div>
-  }
-
-  const blogs = resultGetBlogs.data;
 
   const blogsSortedByLikes = [...blogs].sort((a, b) => b.likes - a.likes);
 
@@ -97,7 +122,10 @@ const Blog = () => {
             >
               {visibleDetails[blog.id] ? "hide" : "show"}
             </button>
-            <div style={showWhenVisibleDetails(blog.id)} className="blogDetails">
+            <div
+              style={showWhenVisibleDetails(blog.id)}
+              className="blogDetails"
+            >
               url: {blog.url} <br></br>
               likes: {blog.likes}{" "}
               <button
