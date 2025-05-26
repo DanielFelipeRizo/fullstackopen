@@ -15,7 +15,6 @@ const authSlice = createSlice({
   },
 });
 
-
 export const initializeUserFromStorage = () => {
   return (dispatch) => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogsappUser");
@@ -40,13 +39,10 @@ export const loginUser = ({ username, password }) => {
 
       blogService.setToken(user.token);
       dispatch(setUser(user));
-      
+
       return "success";
-
     } catch (exception) {
-
       return exception;
-
     }
   };
 };
