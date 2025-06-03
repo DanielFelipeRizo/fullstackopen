@@ -4,67 +4,36 @@ import LoginForm from "./components/LoginForm";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
-import { useDispatch, useSelector } from "react-redux";
 import "../index.css";
-import { initializeUserFromStorage, loginUser, logout } from "./reducers/authReducer";
-import { useNotificationDispatch } from './NotificationContext'
-
-// import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-
+import { initializeUserFromStorage, logout } from "./context/userActions";
+import { useUserDispatch } from "./context/userContext";
+import { useUserValue } from "./context/userContext";
+import { useNotificationDispatch } from "./context/NotificationContext";
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const user = useSelector((state) => state.auth);
-
-  const dispatch = useDispatch();
+  const userDispatch = useUserDispatch();
   const notificationDispatch = useNotificationDispatch();
+  const user = useUserValue();
 
   useEffect(() => {
-    dispatch(initializeUserFromStorage());
-  }, [dispatch]);
+    initializeUserFromStorage(userDispatch);
+  }, []);
 
+  const handleLogout = () => {
+    logout(userDispatch);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    const res = await dispatch(loginUser({ username, password }));
+    notificationDispatch({
+      type: "SET_NOTIFICATION",
+      payload: { text: "logout success", style: "success" },
+    });
 
-    console.log(res);
-    
-
-
-    if (res === "success") {
-
-      notificationDispatch({
-        type: "SET_NOTIFICATION",
-        payload: { text: "login success", style: "success" },
-      });
-
-      setTimeout(() => {
-        notificationDispatch({ type: "CLEAR_NOTIFICATION" });
-      }, 5000);
-
-    } else {
-      notificationDispatch({
-        type: "SET_NOTIFICATION",
-        payload: { text: "failed login", style: "error" },
-      });
-
-      setTimeout(() => {
-        notificationDispatch({ type: "CLEAR_NOTIFICATION" });
-      }, 5000);
-
-    }
-
-    setUsername("");
-    setPassword("");
+    setTimeout(() => {
+      notificationDispatch({ type: "CLEAR_NOTIFICATION" });
+    }, 2000);
   };
-
-  const handleLogout = async () => {
-    dispatch(logout());
-  }
-
 
   return (
     <div>
@@ -74,7 +43,6 @@ const App = () => {
       {!user && (
         <Togglable buttonLabel="log in">
           <LoginForm
-            handleLogin={handleLogin}
             username={username}
             setUsername={setUsername}
             password={password}

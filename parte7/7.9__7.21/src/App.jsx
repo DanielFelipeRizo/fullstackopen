@@ -9,6 +9,7 @@ import "../index.css";
 import { initializeBlogs } from "./reducers/blogReducer";
 import { initializeUserFromStorage, loginUser } from "./reducers/authReducer";
 import { logout } from "./reducers/authReducer";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -35,42 +36,43 @@ const App = () => {
 
   const handleLogout = async () => {
     dispatch(logout());
-  }
-
+  };
 
   return (
-    <div>
-      <h2>welcome to blogs</h2>
-      <Notification />
+    <Router>
+      <div>
+        <h2>welcome to blogs</h2>
+        <Notification />
 
-      {!user && (
-        <Togglable buttonLabel="log in">
-          <LoginForm
-            handleLogin={handleLogin}
-            username={username}
-            setUsername={setUsername}
-            password={password}
-            setPassword={setPassword}
-          />
-        </Togglable>
-      )}
-
-      {user && (
-        <div>
-          <h2>blogs</h2>
-          <p>{user.name} logged in</p>
-          <button type="button" onClick={handleLogout}>
-            logout
-          </button>
-
-          <Togglable buttonLabel="new blog">
-            <BlogForm />
+        {!user && (
+          <Togglable buttonLabel="log in">
+            <LoginForm
+              handleLogin={handleLogin}
+              username={username}
+              setUsername={setUsername}
+              password={password}
+              setPassword={setPassword}
+            />
           </Togglable>
+        )}
 
-          <Blog user={user} />
-        </div>
-      )}
-    </div>
+        {user && (
+          <div>
+            <h2>blogs</h2>
+            <p>{user.name} logged in</p>
+            <button type="button" onClick={handleLogout}>
+              logout
+            </button>
+
+            <Togglable buttonLabel="new blog">
+              <BlogForm />
+            </Togglable>
+
+            <Blog user={user} />
+          </div>
+        )}
+      </div>
+    </Router>
   );
 };
 

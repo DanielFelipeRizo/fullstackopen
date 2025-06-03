@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNotificationDispatch } from "../NotificationContext";
+import { useNotificationDispatch } from "../context/NotificationContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import blogService from "../services/blogs";
 

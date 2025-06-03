@@ -1,12 +1,43 @@
 import PropTypes from "prop-types";
+import { loginUser } from '../context/userActions';
+import { useUserDispatch } from "../context/userContext";
+import { useNotificationDispatch } from "../context/NotificationContext";
 
-const LoginForm = ({
-  handleLogin,
-  username,
-  setUsername,
-  password,
-  setPassword,
-}) => {
+const LoginForm = ({ username, setUsername, password, setPassword }) => {
+
+  const notificationDispatch = useNotificationDispatch();
+  const userDispatch = useUserDispatch();
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    const res = await loginUser({ username, password }, userDispatch);
+
+
+    if (res === "success") {
+      notificationDispatch({
+        type: "SET_NOTIFICATION",
+        payload: { text: "login success", style: "success" },
+      });
+
+      setTimeout(() => {
+        notificationDispatch({ type: "CLEAR_NOTIFICATION" });
+      }, 5000);
+    } else {
+      notificationDispatch({
+        type: "SET_NOTIFICATION",
+        payload: { text: "failed login", style: "error" },
+      });
+
+      setTimeout(() => {
+        notificationDispatch({ type: "CLEAR_NOTIFICATION" });
+      }, 5000);
+    }
+
+    setUsername("");
+    setPassword("");
+
+  };
+
   return (
     <div>
       <h2>Log in to application</h2>
@@ -40,7 +71,6 @@ const LoginForm = ({
 };
 
 LoginForm.propTypes = {
-  handleLogin: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
   setUsername: PropTypes.func.isRequired,
   password: PropTypes.string.isRequired,
