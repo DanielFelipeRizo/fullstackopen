@@ -4,10 +4,11 @@ import LoginForm from "./components/LoginForm";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
+import InfoUsers from "./components/InfoUsers";
 import { useDispatch, useSelector } from "react-redux";
 import "../index.css";
 import { initializeBlogs } from "./reducers/blogReducer";
-import { initializeUserFromStorage, loginUser } from "./reducers/authReducer";
+import { initializeUserFromStorage } from "./reducers/authReducer";
 import { logout } from "./reducers/authReducer";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
@@ -27,27 +28,33 @@ const App = () => {
     dispatch(initializeBlogs());
   }, [dispatch]);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    dispatch(loginUser({ username, password }));
-    setUsername("");
-    setPassword("");
-  };
-
   const handleLogout = async () => {
     dispatch(logout());
   };
 
   return (
-    <Router>
-      <div>
+    <div>
+      <Router>
         <h2>welcome to blogs</h2>
-        <Notification />
+        <div>
+          <Notification />
+        </div>
+
+        <div>
+          <Link to="/">home </Link>
+          <Link to="/users">users </Link>
+          <Link to="/blogs">blogs </Link>
+        </div>
+
+        <Routes>
+          <Route path = '/' element={<h2>home</h2>}/>
+          <Route path = '/users' element={<InfoUsers/>}/>
+          <Route path = '/blogs' element={<h2>blogs</h2>}/>
+        </Routes>
 
         {!user && (
           <Togglable buttonLabel="log in">
             <LoginForm
-              handleLogin={handleLogin}
               username={username}
               setUsername={setUsername}
               password={password}
@@ -71,8 +78,8 @@ const App = () => {
             <Blog user={user} />
           </div>
         )}
-      </div>
-    </Router>
+      </Router>
+    </div>
   );
 };
 
