@@ -8,17 +8,15 @@ const InfoUsers = () => {
   console.log("blogs", blogs);
 
   const blogsForUser = blogs.reduce((obj, blog) => {
-    // console.log("blog.user.username", blog.user.username);
-    // console.log("blog.title", blog.title);
-    // console.log("obj[blog.user.username]", !obj[blog.user.username]);
-
-    if (!obj[blog.user.username]) {
-      obj[blog.user.username] = 1;
+    if (!obj[blog.user.id]) {
+      obj[blog.user.id] = {numberOfBlogs : 1, username: blog.user.username};
     } else {
-      obj[blog.user.username] = obj[blog.user.username] + 1;
+      obj[blog.user.id].numberOfBlogs += 1;
     }
     return obj;
   }, {});
+
+  console.log("blogsForUser", blogsForUser);
 
   return (
     <div className="info-users">
@@ -35,7 +33,7 @@ const InfoUsers = () => {
         <tbody>
           {Object.entries(blogsForUser).map(([username, count]) => (
             <tr key={username}>
-              <td>{username}</td>
+              <Link to = {`/users/${username}`}><td>{username}</td></Link>
               <td>{count}</td>
             </tr>
           ))}
