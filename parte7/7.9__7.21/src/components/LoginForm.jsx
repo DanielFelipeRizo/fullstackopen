@@ -1,15 +1,19 @@
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../reducers/authReducer";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = ({ username, setUsername, password, setPassword }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
     dispatch(loginUser({ username, password }));
     setUsername("");
     setPassword("");
+
+    navigate('/'); // redireccion a la página principal después de iniciar sesión
   };
 
   return (

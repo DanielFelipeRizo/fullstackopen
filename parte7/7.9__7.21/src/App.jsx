@@ -1,22 +1,28 @@
 import { useState, useEffect } from "react";
-import Blog from "./components/Blog";
+import Blogs from "./components/Blogs";
 import LoginForm from "./components/LoginForm";
 import Notification from "./components/Notification";
-import BlogForm from "./components/BlogForm";
-import Togglable from "./components/Togglable";
 import InfoUsers from "./components/InfoUsers";
+import UserBlogs from "./components/UserBlogs";
 import { useDispatch, useSelector } from "react-redux";
 import "../index.css";
 import { initializeBlogs } from "./reducers/blogReducer";
 import { initializeUserFromStorage } from "./reducers/authReducer";
 import { logout } from "./reducers/authReducer";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom";
+import BlogDetails from "./components/BlogDetails";
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const user = useSelector((state) => state.auth);
+  console.log("user", user);
 
   const dispatch = useDispatch();
 
@@ -32,53 +38,59 @@ const App = () => {
     dispatch(logout());
   };
 
+  console.log("user", user);
+
   return (
     <div>
-      <Router>
-        <h2>welcome to blogs</h2>
-        <div>
-          <Notification />
-        </div>
+      <div>
+        <Link to="/">home </Link>
+        <Link to="/users">users </Link>
+        <Link to="/blogs">blogs </Link>
 
-        <div>
-          <Link to="/">home </Link>
-          <Link to="/users">users </Link>
-          <Link to="/blogs">blogs </Link>
-        </div>
+        {user ? <em>{user.name} logged in</em> : <Link to="/login">login</Link>}
 
-        <Routes>
-          <Route path = '/' element={<h2>home</h2>}/>
-          <Route path = '/users' element={<InfoUsers/>}/>
-          <Route path = '/blogs' element={<h2>blogs</h2>}/>
-        </Routes>
+        <button type="button" onClick={handleLogout}>
+          logout
+        </button>
+      </div>
 
-        {!user && (
-          <Togglable buttonLabel="log in">
-            <LoginForm
-              username={username}
-              setUsername={setUsername}
-              password={password}
-              setPassword={setPassword}
-            />
-          </Togglable>
-        )}
+      <h2>welcome to blogs</h2>
+      <div>
+        <Notification />
+      </div>
 
-        {user && (
-          <div>
-            <h2>blogs</h2>
-            <p>{user.name} logged in</p>
-            <button type="button" onClick={handleLogout}>
-              logout
-            </button>
+      <Routes>
+        <Route
+          path="/"
+          element={user ? <Blogs /> : <Navigate replace to="/login" />}
+        />
+        <Route path="/users/:id" element={<UserBlogs />} />
+        <Route path="/blogs/:id" element={<BlogDetails />} />
+        <Route
+          path="/users"
+          element={user ? <InfoUsers /> : <Navigate replace to="/login" />}
+        />
+        <Route
+          path="/blogs"
+          element={user ? <Blogs /> : <Navigate replace to="/login" />}
+        />
 
-            <Togglable buttonLabel="new blog">
-              <BlogForm />
-            </Togglable>
-
-            <Blog user={user} />
-          </div>
-        )}
-      </Router>
+        <Route
+          path="/login"
+          element={
+            user ? (
+              <Navigate replace to="/" />
+            ) : (
+              <LoginForm
+                username={username}
+                setUsername={setUsername}
+                password={password}
+                setPassword={setPassword}
+              />
+            )
+          }
+        />
+      </Routes>
     </div>
   );
 };
