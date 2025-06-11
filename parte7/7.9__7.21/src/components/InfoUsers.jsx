@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { Table } from 'react-bootstrap'
 
 const InfoUsers = () => {
   const blogs = useSelector((state) => {
@@ -24,7 +25,7 @@ const InfoUsers = () => {
       <h2>Users</h2>
       <p>Esta sección muestra información relevante sobre los usuarios.</p>
 
-      <table>
+      <Table striped>
         <thead>
           <tr>
             <th>Usuario</th>
@@ -43,7 +44,7 @@ const InfoUsers = () => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };

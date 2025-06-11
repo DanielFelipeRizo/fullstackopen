@@ -1,77 +1,114 @@
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { updateLikes } from "../reducers/blogReducer";
+import { createCommentBlog, updateLikes } from "../reducers/blogReducer";
 import { setNotification } from "../reducers/notificationReducer";
+import { Card, Button, Badge, Form } from "react-bootstrap";
+import useField from "../hooks/useField";
 
 const BlogDetails = () => {
+
   const dispatch = useDispatch();
-  const id = useParams().id;
+  const { id } = useParams();
+  const comment = useField("text");
 
-  const blogs = useSelector((state) => {
-    return state.blogs;
-  });
+  const blog = useSelector((state) =>
+    state.blogs.find((b) => b.id === id)
+  );
 
-  const blog = blogs.find((blog) => blog.id === id);
+  const addComment = async (event) => {
+    event.preventDefault();
 
-  const handleUpdateLikesBlog = (blog) => {
-    dispatch(updateLikes(blog.id, blog));
+    const commentObject = {
+      createdBy: blog.user.id,
+      comment: comment.value
+    };
+
+    dispatch(createCommentBlog(commentObject));
+
+    comment.onReset();
+
     dispatch(
       setNotification({
-        msj: `you liked '${blog.title}'`,
+        msj: `a new comment ${comment.value} by ${blog.user.username} added`,
         type: "success",
         seconds: 5,
       }),
     );
   };
 
+
+  const handleUpdateLikesBlog = () => {
+    dispatch(updateLikes(blog.id, blog));
+    dispatch(
+      setNotification({
+        msj: `You liked '${blog.title}'`,
+        type: "success",
+        seconds: 5,
+      })
+    );
+  };
+
+
+  if (!blog) return <p className="text-muted">Blog no encontrado.</p>;
+
   return (
-    <div className="blog-details">
-      <h2>{blog.title}</h2>
-      <p>Author: {blog.author}</p>
-      <p>URL: {blog.url}</p>
-      <p>Likes: {blog.likes}</p>
-      <button id="buttonAddLikes" onClick={() => handleUpdateLikesBlog(blog)}>
-        like
-      </button>
+    <div className="container mt-4">
+      <Card className="shadow-sm">
+        <Card.Body>
+          <Card.Title>Título: {blog.title}</Card.Title>
+          <Card.Subtitle className="mb-3 text-muted">
+            Autor: <strong>{blog.author}</strong>
+          </Card.Subtitle>
+
+          <Card.Text>
+            <span className="d-block mb-2">
+              URL:{" "}
+              <a href={blog.url} target="_blank" rel="noopener noreferrer">
+                {blog.url}
+              </a>
+            </span>
+
+            <span className="d-block mb-3">
+              Likes:{" "}
+              <Badge bg="info" pill>
+                {blog.likes}
+              </Badge>
+            </span>
+
+            <Button
+              variant="primary"
+              onClick={handleUpdateLikesBlog}
+              id="buttonAddLikes"
+            >
+              ❤️ Like
+            </Button>
+          </Card.Text>
+        </Card.Body>
+      </Card>
+
+      <br></br>
+
+      <Card>
+        <Card.Title>Comments: </Card.Title>
+        <Card.Subtitle>add comment</Card.Subtitle>
+        <Form onSubmit={addComment}>
+
+          <Form.Group>
+            <Form.Label>comment:</Form.Label>
+            <Form.Control className="w-auto"
+              {...comment}
+            />
+          </Form.Group>
+          <br></br>
+
+          <Button id="buttonOnSubmitCommentForm" type="submit">
+            add comment
+          </Button>
+        </Form>
+
+      </Card>
     </div>
   );
 };
 
 export default BlogDetails;
-
-// <div>
-//   {blogsSortedByLikes.map((blog) => (
-//     <div style={blogStyle} className="blog" key={blog.id}>
-//       <li>
-//         title: {blog.title}, author: <span>{blog.author}</span>
-//         <button
-//           id={`buttonDetailsVisibility-${blog.id}`}
-//           onClick={() => handleView(blog.id)}
-//         >
-//           {visibleDetails[blog.id] ? "hide" : "show"}
-//         </button>
-//         <div style={showWhenVisibleDetails(blog.id)} className="blogDetails">
-//           url: {blog.url} <br></br>
-//           likes: {blog.likes}{" "}
-//           <button
-//             id="buttonAddLikes"
-//             onClick={() => handleUpdateLikesBlog(blog)}
-//           >
-//             like
-//           </button>
-//           <br></br>
-//           user: {blog.user.name}
-//           <br></br>
-//           <button
-//             id="buttonDeleteBlog"
-//             style={showWhenVisibleDeleteButton}
-//             onClick={() => handleDeleteBlog(blog)}
-//           >
-//             Delete
-//           </button>
-//         </div>
-//       </li>
-//     </div>
-//   ))}
-//   ;
-// </div>

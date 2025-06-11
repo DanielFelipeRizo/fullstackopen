@@ -44,6 +44,25 @@ blogsRouter.post("/", async (request, response) => {
   response.status(201).json(populatedBlog);
 });
 
+blogsRouter.put("/:id/comments", async (request, response) => {
+  const body = request.body;
+  const comment = {
+    createdBy: body.createdBy,
+    comment: body.comment
+  };
+
+  const bodyBlog = await Blog.findById(request.params.id);
+  if (bodyBlog) {
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
+      new: true,
+    });
+
+    response.json(updatedBlog);
+  } else {
+    response.status(404).json({ error: "resource not found" });
+  }
+});
+
 blogsRouter.put("/:id", async (request, response) => {
   const body = request.body;
   const blog = {

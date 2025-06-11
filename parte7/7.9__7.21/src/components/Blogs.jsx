@@ -4,6 +4,7 @@ import Togglable from "../components/Togglable";
 import { deleteBlogObj } from "../reducers/blogReducer";
 import { setNotification } from "../reducers/notificationReducer";
 import { Link } from "react-router-dom";
+import { Card, ListGroup, Button } from "react-bootstrap";
 
 const Blogs = () => {
   const dispatch = useDispatch();
@@ -13,15 +14,6 @@ const Blogs = () => {
   });
 
   const user = useSelector((state) => state.auth)
-
-  //estilos en linea
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 4,
-    border: "solid",
-    borderWidth: 2,
-    marginBottom: 5,
-  };
 
   const handleDeleteBlog = (blog) => {
     dispatch(deleteBlogObj(blog.id));
@@ -35,38 +27,41 @@ const Blogs = () => {
     );
   };
 
-  //se encarga de ocultar el boton de eliminar si el usuario logueado no es el mismo que creo el blog
-  // if (blog.user.username !== user.username) {
-  //   showWhenVisibleDeleteButton.display = "none";
-  // }
+
 
   const blogsSortedByLikes = [...blogs].sort((a, b) => b.likes - a.likes);
 
   return (
-    <div>
-      {user && (
-        <div>
-          <h2>blogs</h2>
+    <div className="container mt-4">
+      <Card className="shadow-sm">
+        <Card.Body>
+          {user && (
+            <div>
+              <h2>blogs</h2>
 
-          <Togglable buttonLabel="new blog">
-            <BlogForm />
-          </Togglable>
-        </div>
-      )}
-      {blogsSortedByLikes.map((blog) => (
-        <div style={blogStyle} className="blog" key={blog.id}>
-          <li>
-            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-            <button
-              id="buttonDeleteBlog"
-              onClick={() => handleDeleteBlog(blog)}
-            >
-              Delete
-            </button>
-          </li>
-        </div>
-      ))}
-      ;
+              <Togglable buttonLabel="new blog">
+                <BlogForm />
+              </Togglable>
+            </div>
+          )}
+          <ListGroup variant="flush">
+            {blogsSortedByLikes.map((blog) => (
+              <ListGroup.Item key={blog.id}>
+                <li>
+                  <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>{" "}
+                  <Button class name="float-end" variant="danger" size="sm"
+                    style={{ display: user.username === blog.user.username ? "inline" : "none" }}
+                    id="buttonDeleteBlog"
+                    onClick={() => handleDeleteBlog(blog)}
+                  >
+                    Delete
+                  </Button>
+                </li>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </Card.Body>
+      </Card>
     </div>
   );
 };

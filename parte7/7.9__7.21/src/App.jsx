@@ -16,6 +16,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import BlogDetails from "./components/BlogDetails";
+import { Navbar, Nav, Button } from 'react-bootstrap'
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -38,21 +39,46 @@ const App = () => {
     dispatch(logout());
   };
 
-  console.log("user", user);
+  //  console.log("user", user);
+
+  const padding = {
+    padding: 5
+  }
 
   return (
-    <div>
-      <div>
-        <Link to="/">home </Link>
-        <Link to="/users">users </Link>
-        <Link to="/blogs">blogs </Link>
+    <div className="container">
 
-        {user ? <em>{user.name} logged in</em> : <Link to="/login">login</Link>}
+      {user && (
+        <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav className="me-auto">
+              <Nav.Link href="#" as="span">
+                <Link style={padding} to="/">home</Link>
+              </Nav.Link>
+              <Nav.Link href="#" as="span">
+                <Link style={padding} to="/users">users</Link>
+              </Nav.Link>
+              <Nav.Link href="#" as="span">
+                <Link style={padding} to="/blogs">blogs</Link>
+              </Nav.Link>
+              <Nav.Link href="#" as="span">
+                {user
+                  ? <em style={padding}>{user.name} logged in</em>
+                  : <Link style={padding} to="/login">login</Link>
+                }
+              </Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
 
-        <button type="button" onClick={handleLogout}>
-          logout
-        </button>
-      </div>
+          <Button type="button" onClick={handleLogout}>
+            logout
+          </Button>
+
+        </Navbar>
+
+
+      )}
 
       <h2>welcome to blogs</h2>
       <div>
