@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createCommentBlog, updateLikes } from "../reducers/blogReducer";
 import { setNotification } from "../reducers/notificationReducer";
-import { Card, Button, Badge, Form } from "react-bootstrap";
+import { Card, Button, Badge, Form, ListGroup } from "react-bootstrap";
 import useField from "../hooks/useField";
 
 const BlogDetails = () => {
@@ -23,7 +23,7 @@ const BlogDetails = () => {
       comment: comment.value
     };
 
-    dispatch(createCommentBlog(commentObject));
+    dispatch(createCommentBlog(id, commentObject));
 
     comment.onReset();
 
@@ -105,6 +105,22 @@ const BlogDetails = () => {
             add comment
           </Button>
         </Form>
+
+        <br></br>
+
+        <ListGroup variant="flush">
+          {blog.comments.length > 0 ? (
+            blog.comments.map((c, index) => (
+              <ListGroup.Item key={index}>
+                {c.comment}
+              </ListGroup.Item>
+            ))
+          ) : (
+            <ListGroup.Item className="text-muted">
+              No comments yet.
+            </ListGroup.Item>
+          )}
+        </ListGroup>
 
       </Card>
     </div>

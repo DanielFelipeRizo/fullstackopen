@@ -32,7 +32,7 @@ const Blogs = () => {
   const blogsSortedByLikes = [...blogs].sort((a, b) => b.likes - a.likes);
 
   return (
-    <div className="container mt-4">
+    <div>
       <Card className="shadow-sm">
         <Card.Body>
           {user && (

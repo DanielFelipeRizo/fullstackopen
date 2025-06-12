@@ -20,12 +20,12 @@ const create = async (newObject) => {
   return response.data;
 };
 
-const createComment = async (newObject) => {
+const createComment = async (blogId, newCommentObject) => {
   const config = {
     headers: { Authorization: token },
   };
 
-  const response = await axios.post(`${baseUrl}/comments/${id}`, newObject, config);
+  const response = await axios.put(`${baseUrl}/comments/${blogId}`, newCommentObject, config);
   return response.data;
 };
 
