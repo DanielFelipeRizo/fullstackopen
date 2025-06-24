@@ -46,3 +46,5 @@ parte2/part2/src/components/Footer.jsx
 parte2/part2/src/components/Note.jsx
 parte2/part2/src/components/Notification.jsx
 parte2/part2/src/services/notes.js
+node_modules
+package-lock.json
