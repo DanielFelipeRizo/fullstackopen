@@ -186,7 +186,12 @@ const resolvers = {
         authors = authors.concat({ name: args.author, id: uuid() });
       }
 
+      
+      
       const newBook = {...args, id: uuid()}
+
+      console.log('newBook', newBook);
+
       books = books.concat(newBook);
       return newBook;
     },

@@ -1,13 +1,45 @@
 import { useState } from 'react'
+import { useMutation } from '@apollo/client'
 
-const NewBook = (props) => {
+import { ADD_BOOK, All_AUTHORS, ALL_BOOKS } from "../queries";
+
+const NewBook = ({ show, setError }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
-  if (!props.show) {
+
+  const [createBook] = useMutation(ADD_BOOK, {
+
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(response.data.addBook),
+        }
+      })
+      // Actualiza autores
+      // cache.updateQuery({ query: All_AUTHORS }, ({ allAuthors }) => {
+      //   const newAuthor = response.data.addBook.author
+
+      //   if (allAuthors.some(a => a.name === newAuthor.name)) {
+      //     return { allAuthors }
+      //   }
+      //   return {
+      //     allAuthors: allAuthors.concat(newAuthor),
+      //   }
+      // })
+    },
+    onError: (error) => {
+      const messages = error.graphQLErrors.map(e => e.message).join('\n')
+      console.log('Error al crear el libro:', messages);
+
+      setError(messages)
+    }
+  })
+
+  if (!show) {
     return null
   }
 
@@ -15,6 +47,12 @@ const NewBook = (props) => {
     event.preventDefault()
 
     console.log('add book...')
+
+    createBook({
+      variables: {
+        title, author, published: parseInt(published), genres
+      }
+    })
 
     setTitle('')
     setPublished('')
@@ -67,6 +105,13 @@ const NewBook = (props) => {
       </form>
     </div>
   )
+}
+
+import PropTypes from 'prop-types'
+
+NewBook.propTypes = {
+  show: PropTypes.bool,
+  setError: PropTypes.func
 }
 
 export default NewBook

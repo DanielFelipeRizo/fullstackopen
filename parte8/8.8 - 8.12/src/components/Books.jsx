@@ -3,7 +3,7 @@ const Books = (props) => {
     return null
   }
 
-  const books = []
+  const books = props.books;
 
   return (
     <div>
@@ -27,6 +27,19 @@ const Books = (props) => {
       </table>
     </div>
   )
+}
+
+import PropTypes from 'prop-types'
+
+Books.propTypes = {
+  show: PropTypes.bool,
+  books: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      author: PropTypes.string,
+      published: PropTypes.number
+    })
+  ).isRequired
 }
 
 export default Books
