@@ -24,8 +24,8 @@ const App = () => {
     }, 10000)
   }
 
-  console.log('authors', result_all_authors.data.allAuthors);
-  console.log('books', result_all_books.data.allBooks);
+  // console.log('authors', result_all_authors.data.allAuthors);
+  // console.log('books', result_all_books.data.allBooks);
 
 
   return (
@@ -38,7 +38,7 @@ const App = () => {
 
       <Notify errorMessage={errorMessage} />
 
-      <Authors show={page === "authors"} authors={result_all_authors.data.allAuthors} />
+      <Authors show={page === "authors"} authors={result_all_authors.data.allAuthors} setError={notify} />
 
       <Books show={page === "books"} books={result_all_books.data.allBooks} />
 

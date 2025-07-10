@@ -195,7 +195,7 @@ const resolvers = {
       const author = authors.find(author => author.name === args.name);
       if (!author) {
         return null;
-      }
+      }    
 
       const updatedAuthor = { ...author, born: args.setBornTo };
       authors = authors.map(a => a.id === author.id ? updatedAuthor : a);

@@ -1,6 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import { v1 as uuid } from 'uuid';
+import { v1 as uuid } from "uuid";
 
 let authors = [
   {
@@ -138,7 +138,7 @@ const typeDefs = `
 
     editAuthor(
       name: String!
-      setBornTo: Int!
+      setBornTo: Int
     ): Author
   }
 `;
@@ -180,34 +180,41 @@ const resolvers = {
 
   Mutation: {
     addBook: (root, args) => {
-
-      const authorExists = authors.some(author => author.name === args.author);
-      if(!authorExists){
+      const authorExists = authors.some(
+        (author) => author.name === args.author
+      );
+      if (!authorExists) {
         authors = authors.concat({ name: args.author, id: uuid() });
       }
 
-      
-      
-      const newBook = {...args, id: uuid()}
-
-      console.log('newBook', newBook);
+      const newBook = { ...args, id: uuid() };
 
       books = books.concat(newBook);
       return newBook;
     },
 
     editAuthor: (root, args) => {
-      const author = authors.find(author => author.name === args.name);
+      const author = authors.find((author) => author.name === args.name);
       if (!author) {
         return null;
       }
 
-      const updatedAuthor = { ...author, born: args.setBornTo };
-      authors = authors.map(a => a.id === author.id ? updatedAuthor : a);
+      const bookCountAuthors = books.filter(
+        (book) => book.author === author.name
+      ).length;
+
+      const updatedAuthor = {
+        ...author,
+        born: args.setBornTo,
+        bookCount: bookCountAuthors,
+      };
+      // console.log('updatedAuthor:', updatedAuthor);
+
+      authors = authors.map((a) => (a.id === author.id ? updatedAuthor : a));
+
       return updatedAuthor;
     },
-
-  }
+  },
 };
 
 const server = new ApolloServer({

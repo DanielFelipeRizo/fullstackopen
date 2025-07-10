@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
+import { v1 as uuid } from "uuid";
 
 import { ADD_BOOK, All_AUTHORS, ALL_BOOKS } from "../queries";
 
@@ -19,17 +20,33 @@ const NewBook = ({ show, setError }) => {
           allBooks: allBooks.concat(response.data.addBook),
         }
       })
-      // Actualiza autores
-      // cache.updateQuery({ query: All_AUTHORS }, ({ allAuthors }) => {
-      //   const newAuthor = response.data.addBook.author
 
-      //   if (allAuthors.some(a => a.name === newAuthor.name)) {
-      //     return { allAuthors }
-      //   }
-      //   return {
-      //     allAuthors: allAuthors.concat(newAuthor),
-      //   }
-      // })
+      // Actualiza autores
+      cache.updateQuery({ query: All_AUTHORS }, ({ allAuthors }) => {
+        const addedAuthorName = response.data.addBook.author
+        const existingAuthor = allAuthors.find(a => a.name === addedAuthorName)
+
+        if (existingAuthor) {
+          return {
+            allAuthors: allAuthors.map(a =>
+              a.name === addedAuthorName
+                ? { ...a, bookCount: (a.bookCount || 0) + 1 }
+                : a
+            )
+          }
+        } else {
+          const newAuthor = {
+            name: addedAuthorName,
+            born: null,
+            bookCount: 1,
+            id: uuid()
+          }
+
+          return {
+            allAuthors: allAuthors.concat(newAuthor)
+          }
+        }
+      })
     },
     onError: (error) => {
       const messages = error.graphQLErrors.map(e => e.message).join('\n')
@@ -45,8 +62,6 @@ const NewBook = ({ show, setError }) => {
 
   const submit = async (event) => {
     event.preventDefault()
-
-    console.log('add book...')
 
     createBook({
       variables: {
