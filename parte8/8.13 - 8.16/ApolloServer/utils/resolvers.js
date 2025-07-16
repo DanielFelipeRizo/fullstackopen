@@ -3,26 +3,36 @@ import Author from "../models/author.js";
 
 const resolvers = {
   Query: {
-    dummy: () => 0,
-    // booksCount: () => books.length,
-    // authorCount: () => authors.length,
+    booksCount: async () => await Book.countDocuments({}),
+    authorCount: async () => await Author.countDocuments({}),
 
-    // allBooks: (root, args) => {
-    //   return books.filter((book) => {
-    //     const matchesAuthor = !args.author || book.author === args.author;
-    //     const matchesGenre = !args.genre || book.genres.includes(args.genre);
-    //     return matchesAuthor && matchesGenre;
-    //   });
-    // },
+    allBooks: async (root, args) => {
 
-    //   allAuthors: () => {
-    //     return authors.map((author) => {
-    //       const bookCount = books.filter(
-    //         (book) => book.author === author.name
-    //       ).length;
-    //       return { ...author, bookCount };
-    //     });
-    //   },
+      let books = await Book.find({}).populate("author");
+
+      const booksFilter = books.filter((book) => {
+        const matchesAuthor = !args.author || book.author.name === args.author;
+        const matchesGenre = !args.genre || book.genres.includes(args.genre);
+        return matchesAuthor && matchesGenre;
+      });
+
+      return booksFilter;
+    },
+
+    allAuthors: async () => {
+
+      const authors = await Author.find({});
+      const books = await Book.find({}).populate("author");
+      
+      const authorsWithBookCount = authors.map((author) => {
+        const bookCount = books.filter(
+          (book) => book.author.name === author.name
+        ).length;
+        return { ...author.toObject(), bookCount };
+      });
+
+      return authorsWithBookCount;
+    },
   },
 
   Mutation: {

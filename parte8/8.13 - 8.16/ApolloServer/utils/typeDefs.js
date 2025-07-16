@@ -16,7 +16,6 @@ const typeDefs = `
   }
 
   type Query {
-    dummy: Int
     booksCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
