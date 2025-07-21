@@ -1,6 +1,6 @@
 import Book from "../models/book.js";
 import Author from "../models/author.js";
-const { GraphQLError } = require('graphql');
+import { GraphQLError } from "graphql";
 
 const resolvers = {
   Query: {
@@ -8,7 +8,6 @@ const resolvers = {
     authorCount: async () => await Author.countDocuments({}),
 
     allBooks: async (root, args) => {
-
       let books = await Book.find({}).populate("author");
 
       const booksFilter = books.filter((book) => {
@@ -21,10 +20,9 @@ const resolvers = {
     },
 
     allAuthors: async () => {
-
       const authors = await Author.find({});
       const books = await Book.find({}).populate("author");
-      
+
       const authorsWithBookCount = authors.map((author) => {
         const bookCount = books.filter(
           (book) => book.author.name === author.name
@@ -38,6 +36,19 @@ const resolvers = {
 
   Mutation: {
     addBook: async (root, args) => {
+
+      if (args.author.length < 4) {
+        throw new GraphQLError(
+          "Author name must be at least 4 characters long",
+          {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.author,
+            },
+          }
+        );
+      }
+
       let author = await Author.findOne({ name: args.author });
 
       if (!author) {
@@ -45,10 +56,10 @@ const resolvers = {
         await author.save();
       }
 
-      if(args.title.length < 2) {
-        throw new GraphQLError('Title must be at least 2 characters long', {
+      if (args.title.length < 2) {
+        throw new GraphQLError("Title must be at least 2 characters long", {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: "BAD_USER_INPUT",
             invalidArgs: args.title,
           },
         });
@@ -61,6 +72,7 @@ const resolvers = {
     },
 
     editAuthor: async (root, args) => {
+
       const author = await Author.findOne({ name: args.name });
       if (!author) return null;
 
