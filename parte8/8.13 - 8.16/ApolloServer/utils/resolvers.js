@@ -1,5 +1,6 @@
 import Book from "../models/book.js";
 import Author from "../models/author.js";
+const { GraphQLError } = require('graphql');
 
 const resolvers = {
   Query: {
@@ -42,6 +43,15 @@ const resolvers = {
       if (!author) {
         author = new Author({ name: args.author, born: null });
         await author.save();
+      }
+
+      if(args.title.length < 2) {
+        throw new GraphQLError('Title must be at least 2 characters long', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title,
+          },
+        });
       }
 
       const book = new Book({ ...args, author: author._id });
