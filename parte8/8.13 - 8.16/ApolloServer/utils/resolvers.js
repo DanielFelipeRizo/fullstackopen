@@ -1,6 +1,11 @@
 import Book from "../models/book.js";
 import Author from "../models/author.js";
+import User from "../models/user.js";
 import { GraphQLError } from "graphql";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const resolvers = {
   Query: {
@@ -36,7 +41,6 @@ const resolvers = {
 
   Mutation: {
     addBook: async (root, args) => {
-
       if (args.author.length < 4) {
         throw new GraphQLError(
           "Author name must be at least 4 characters long",
@@ -53,6 +57,7 @@ const resolvers = {
 
       if (!author) {
         author = new Author({ name: args.author, born: null });
+
         await author.save();
       }
 
@@ -72,7 +77,6 @@ const resolvers = {
     },
 
     editAuthor: async (root, args) => {
-
       const author = await Author.findOne({ name: args.name });
       if (!author) return null;
 
@@ -87,6 +91,38 @@ const resolvers = {
         born: author.born,
         bookCount,
       };
+    },
+
+    createUser: async (root, args) => {
+      const user = new User({ username: args.username });
+
+      return user.save().catch((error) => {
+        throw new GraphQLError("Creating the user failed", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.name,
+            error,
+          },
+        });
+      });
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+
+      if (!user || args.password !== "secret") {
+        throw new GraphQLError("wrong credentials", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userForToken, process.env.SECRET) };
     },
   },
 };

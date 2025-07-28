@@ -15,11 +15,22 @@ const typeDefs = `
     bookCount: Int!
   }
 
+  type User {
+  username: String!
+  friends: [Author!]!
+  id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
   type Query {
     booksCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+    me: User
   }
 
   type Mutation {
