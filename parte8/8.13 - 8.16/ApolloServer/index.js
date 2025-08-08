@@ -26,15 +26,18 @@ startStandaloneServer(server, {
   context: async ({ req, res }) => {
     const auth = req ? req.headers.authorization : null;
     if (auth && auth.startsWith("Bearer ")) {
+
       const decodedToken = jwt.verify(
         auth.substring(7),
         process.env.JWT_SECRET
       );
-      const currentUser = await User.findById(decodedToken.id).populate(
-        "friends"
-      );
+      
+      const currentUser = await User.findById(decodedToken.id)
+
       return { currentUser };
     }
+    console.log("No token provided, no current user set");
+    
   },
 }).then(({ url }) => {
   console.log(`Server ready at ${url}`);
