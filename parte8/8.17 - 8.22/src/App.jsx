@@ -24,7 +24,7 @@ const App = () => {
     }, 10000)
   }
 
-  // console.log('authors', result_all_authors.data);
+  console.log('authors', result_all_authors.data.allAuthors);
   console.log('books', result_all_books.data);
 
 

@@ -40,16 +40,7 @@ const resolvers = {
   },
 
   Mutation: {
-    addBook: async (root, args, context) => {
-
-      const currentUser = context.currentUser
-
-      if (!currentUser) {
-        throw new GraphQLError('wrong credentials', {
-          extensions: { code: 'BAD_USER_INPUT' }
-        })
-      }
-
+    addBook: async (root, args) => {
       if (args.author.length < 4) {
         throw new GraphQLError(
           "Author name must be at least 4 characters long",
@@ -62,6 +53,14 @@ const resolvers = {
         );
       }
 
+      let author = await Author.findOne({ name: args.author });
+
+      if (!author) {
+        author = new Author({ name: args.author, born: null });
+
+        await author.save();
+      }
+
       if (args.title.length < 2) {
         throw new GraphQLError("Title must be at least 2 characters long", {
           extensions: {
@@ -71,69 +70,18 @@ const resolvers = {
         });
       }
 
-      let author = await Author.findOne({ name: args.author });
-
-      if (!author) {
-        author = new Author({ name: args.author, born: null });
-
-
-
-        try {
-          await author.save()
-        } catch (error) {
-          throw new GraphQLError('Saving user failed', {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              invalidArgs: args.name,
-              error
-            }
-          })
-        }
-      }
-
       const book = new Book({ ...args, author: author._id });
-
-      try {
-        await book.save();
-      } catch (error) {
-        throw new GraphQLError('Saving user failed', {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-            invalidArgs: args.name,
-            error
-          }
-        })
-      }
+      await book.save();
 
       return book.populate("author");
     },
 
-    editAuthor: async (root, args, context) => {
-
-      const currentUser = context.currentUser
-
-      if (!currentUser) {
-        throw new GraphQLError('wrong credentials', {
-          extensions: { code: 'BAD_USER_INPUT' }
-        })
-      }
-
+    editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name });
       if (!author) return null;
 
       author.born = args.setBornTo;
-
-      try {
-        await author.save();
-      } catch (error) {
-        throw new GraphQLError('Saving user failed', {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-            invalidArgs: args.name,
-            error
-          }
-        })
-      }
+      await author.save();
 
       const bookCount = await Book.countDocuments({ author: author._id });
 
@@ -146,7 +94,6 @@ const resolvers = {
     },
 
     createUser: async (root, args) => {
-
       const user = new User({ username: args.username });
 
       return user.save().catch((error) => {
