@@ -11,7 +11,7 @@ const resolvers = {
   Query: {
     booksCount: async () => await Book.countDocuments({}),
     authorCount: async () => await Author.countDocuments({}),
-
+    
     allBooks: async (root, args) => {
       let books = await Book.find({}).populate("author");
 
@@ -35,6 +35,8 @@ const resolvers = {
         return { ...author.toObject(), bookCount };
       });
 
+      console.log('sd');
+      
       return authorsWithBookCount;
     },
 
