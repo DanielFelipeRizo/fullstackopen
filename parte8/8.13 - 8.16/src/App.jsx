@@ -25,7 +25,7 @@ const App = () => {
   }
 
   // console.log('authors', result_all_authors.data);
-  console.log('books', result_all_books.data);
+  // console.log('books', result_all_books.data);
 
 
   return (
@@ -43,6 +43,7 @@ const App = () => {
       <Books show={page === "books"} books={result_all_books.data.allBooks} />
 
       <NewBook show={page === "add"} setError={notify} />
+
     </div>
   );
 };

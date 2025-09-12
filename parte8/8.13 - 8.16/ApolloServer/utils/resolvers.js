@@ -11,9 +11,12 @@ const resolvers = {
   Query: {
     booksCount: async () => await Book.countDocuments({}),
     authorCount: async () => await Author.countDocuments({}),
-    
+
     allBooks: async (root, args) => {
       let books = await Book.find({}).populate("author");
+
+      // Filtra libros sin autor
+      books = books.filter(book => book.author);
 
       const booksFilter = books.filter((book) => {
         const matchesAuthor = !args.author || book.author.name === args.author;
@@ -30,13 +33,15 @@ const resolvers = {
 
       const authorsWithBookCount = authors.map((author) => {
         const bookCount = books.filter(
-          (book) => book.author.name === author.name
+          (book) => book.author && book.author.name === author.name // validar que el campo name exista
         ).length;
-        return { ...author.toObject(), bookCount };
+        return {
+          ...author.toObject(),
+          id: author._id, // se debe establecer el id manualmente para evitar errores
+          bookCount
+        };
       });
 
-      console.log('sd');
-      
       return authorsWithBookCount;
     },
 
@@ -166,6 +171,14 @@ const resolvers = {
       return { value: jwt.sign(userForToken, process.env.SECRET) };
     },
   },
-};
+
+  // se modifica el resolver de Author para calcular bookCount dinámicamente
+  Author: {
+    bookCount: async (parent) => {
+      // parent es el objeto Author
+      return await Book.countDocuments({ author: parent.id || parent._id });
+    }
+  },
+}
 
 export default resolvers;

@@ -19,7 +19,7 @@ const Books = (props) => {
           {books.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
-              <td>{a.author}</td>
+              <td>{a.author.name}</td>
               <td>{a.published}</td>
             </tr>
           ))}
@@ -36,7 +36,11 @@ Books.propTypes = {
   books: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
-      author: PropTypes.string,
+      author: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        born: PropTypes.number,
+        id: PropTypes.string
+      }),
       published: PropTypes.number
     })
   ).isRequired

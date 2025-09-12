@@ -36,7 +36,7 @@ startStandaloneServer(server, {
 
       return { currentUser };
     }
-    console.log("No token provided, no current user set");
+    // console.log("No token provided, no current user set");
     
   },
 }).then(({ url }) => {
