@@ -51,7 +51,17 @@ const resolvers = {
   },
 
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+
+      const currentUser = context.currentUser
+
+      if (!currentUser) {
+        throw new GraphQLError('wrong credentials', {
+          extensions: { code: 'BAD_USER_INPUT' }
+        })
+      }
+
+
       if (args.author.length < 4) {
         throw new GraphQLError(
           "Author name must be at least 4 characters long",
@@ -110,7 +120,16 @@ const resolvers = {
       return book.populate("author");
     },
 
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+
+      const currentUser = context.currentUser
+
+      if (!currentUser) {
+        throw new GraphQLError('wrong credentials', {
+          extensions: { code: 'BAD_USER_INPUT' }
+        })
+      }
+
       const author = await Author.findOne({ name: args.name });
       if (!author) return null;
 
