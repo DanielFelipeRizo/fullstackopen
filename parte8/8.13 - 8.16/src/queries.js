@@ -33,18 +33,18 @@ export const ADD_BOOK = gql`
     $published: Int!
     $genres: [String!]!
   ) {
-    addBook(
-      title: $title
-      author: $author
-      published: $published
-      genres: $genres
-    ) {
-      title
-      author
-      published
-      id
+      addBook(
+        title: $title
+        author: $author
+        published: $published
+        genres: $genres
+      ) {
+          title
+          author
+          published
+          id
+        }
     }
-  }
 `;
 
 export const EDIT_BORN_AUTHOR = gql`

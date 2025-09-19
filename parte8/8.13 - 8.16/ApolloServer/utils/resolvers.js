@@ -87,31 +87,24 @@ const resolvers = {
 
       if (!author) {
         author = new Author({ name: args.author, born: null });
+        console.log('author nuevo', author);
 
-
-
-        try {
-          await author.save()
-        } catch (error) {
-          throw new GraphQLError('Saving user failed', {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              invalidArgs: args.name,
-              error
-            }
-          })
-        }
       }
 
+      console.log('author existente', author);
+
       const book = new Book({ ...args, author: author._id });
+      console.log('book ', book);
+ 
 
       try {
-        await book.save();
+        await author.save()
+        await book.save()
       } catch (error) {
-        throw new GraphQLError('Saving user failed', {
+        throw new GraphQLError('Saving author or book failed', {
           extensions: {
-            code: 'BAD_USER_INPUT',
-            invalidArgs: args.name,
+            code: 'BAD_INPUT',
+            invalidArgs: args,
             error
           }
         })
@@ -187,7 +180,7 @@ const resolvers = {
         id: user._id,
       };
 
-      return { value: jwt.sign(userForToken, process.env.SECRET) };
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
     },
   },
 

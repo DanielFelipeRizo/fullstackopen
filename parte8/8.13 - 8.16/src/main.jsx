@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client'
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink, split } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
 
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
