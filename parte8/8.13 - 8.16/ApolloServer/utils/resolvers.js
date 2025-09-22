@@ -61,7 +61,6 @@ const resolvers = {
         })
       }
 
-
       if (args.author.length < 4) {
         throw new GraphQLError(
           "Author name must be at least 4 characters long",
@@ -87,15 +86,9 @@ const resolvers = {
 
       if (!author) {
         author = new Author({ name: args.author, born: null });
-        console.log('author nuevo', author);
-
       }
 
-      console.log('author existente', author);
-
       const book = new Book({ ...args, author: author._id });
-      console.log('book ', book);
- 
 
       try {
         await author.save()

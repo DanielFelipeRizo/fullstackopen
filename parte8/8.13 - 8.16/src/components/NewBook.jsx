@@ -11,7 +11,6 @@ const NewBook = ({ show, setError }) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
-
   const [createBook] = useMutation(ADD_BOOK, {
 
     update: (cache, response) => {
@@ -23,23 +22,24 @@ const NewBook = ({ show, setError }) => {
 
       // Actualiza autores
       cache.updateQuery({ query: All_AUTHORS }, ({ allAuthors }) => {
-        const addedAuthorName = response.data.addBook.author
-        const existingAuthor = allAuthors.find(a => a.name === addedAuthorName)
+        const addedAuthor = response.data.addBook.author
+        const existingAuthor = allAuthors.find(a => a.name === addedAuthor.name)
 
         if (existingAuthor) {
           return {
             allAuthors: allAuthors.map(a =>
-              a.name === addedAuthorName
+              a.name === addedAuthor.name
                 ? { ...a, bookCount: (a.bookCount || 0) + 1 }
                 : a
             )
           }
         } else {
           const newAuthor = {
-            name: addedAuthorName,
+            name: addedAuthor.name,
             born: null,
             bookCount: 1,
-            id: uuid()
+            id: addedAuthor.id,
+            __typename: 'Author'
           }
 
           return {
