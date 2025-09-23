@@ -1,9 +1,24 @@
+import { useState } from 'react';
+
 const Books = (props) => {
+
+  const [selectedGenre, setSelectedGenre] = useState(null);
+
+
+  console.log('props', props.books);
+  
+
   if (!props.show) {
     return null
   }
 
   const books = props.books;
+  const genresBooks = books.map(b => b.genres).flat().filter((v, i, a) => a.indexOf(v) === i);
+
+  // Filtrar libros por género seleccionado
+  const filteredBooks = selectedGenre
+    ? books.filter(b => b.genres.includes(selectedGenre))
+    : books;
 
   return (
     <div>
@@ -16,15 +31,27 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((a) => (
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
+          {filteredBooks.map((b) => (
+            <tr key={b.title}>
+              <td>{b.title}</td>
+              <td>{b.author.name}</td>
+              <td>{b.published}</td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      <br />
+
+      <div>
+        <h5>Genres</h5>
+        <button onClick={() => setSelectedGenre(null)}>all genres</button>
+        {genresBooks.map((genre) => (
+          <button key={genre} onClick={() => setSelectedGenre(genre)}>{genre}</button>
+        ))}
+      </div>
+      <br />
+
     </div>
   )
 }

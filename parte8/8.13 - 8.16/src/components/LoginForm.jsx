@@ -19,6 +19,7 @@ const LoginForm = ({ setError, setToken }) => {
       const token = result.data.login.value
       setToken(token)
       localStorage.setItem('library-user-token', token)
+      localStorage.setItem('library-user-username', username)
     }
   }, [result.data]) // eslint-disable-line
 
@@ -53,11 +54,11 @@ const LoginForm = ({ setError, setToken }) => {
 }
 
 
-// LoginForm.propTypes = {
-//   username: PropTypes.string.isRequired,
-//   setUsername: PropTypes.func.isRequired,
-//   password: PropTypes.string.isRequired,
-//   setPassword: PropTypes.func.isRequired,
-// };
+import PropTypes from 'prop-types'
+
+LoginForm.propTypes = {
+  setError: PropTypes.func.isRequired,
+  setToken: PropTypes.func.isRequired,
+};
 
 export default LoginForm;

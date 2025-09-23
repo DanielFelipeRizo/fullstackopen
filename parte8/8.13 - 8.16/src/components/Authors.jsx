@@ -8,34 +8,10 @@ import { All_AUTHORS } from "../queries";
 
 const Authors = ({ authors, show, setError }) => {
 
-
-  console.log('authors props from Authors', authors);
-  
-
   const [name, setName] = useState('')
   const [setBornTo, setBorn] = useState('')
 
   const [changeBorn, result] = useMutation(EDIT_BORN_AUTHOR)
-  
-  // const [changeBorn, result] = useMutation(EDIT_BORN_AUTHOR, {
-  //   update: (cache, response) => {
-  //     cache.updateQuery({ query: All_AUTHORS }, ({ allAuthors }) => {
-
-  //       console.log('response--------------->', response.data.editAuthor)
-  //       // return {
-
-  //       //   // allAuthors: allAuthors.concat(response.data.editAuthor),
-  //       // }
-      
-  //     })
-  //   },
-  //   onError: (error) => {
-  //     const messages = error.graphQLErrors.map(e => e.message).join('\n')
-  //     console.log('Error al actualizar el autor:', messages);
-
-  //     setError(messages)
-  //   }
-  // })
 
   useEffect(() => {
     if (result.data && result.data.editAuthor === null) {
@@ -62,7 +38,6 @@ const Authors = ({ authors, show, setError }) => {
 
   // convertir los autores a formato compatible con react-select
   const authorOptions = authors
-    .slice(0, 10) // limitar a 10
     .map((author) => ({
       value: author.name,
       label: author.name,

@@ -1,20 +1,27 @@
-import { useApolloClient, useQuery } from '@apollo/client';
-import { useState } from "react";
-import Authors from "./components/Authors";
-import Books from "./components/Books";
-import NewBook from "./components/NewBook";
-import Notify from "./components/Notify";
-import LoginForm from './components/LoginForm';
-import { All_AUTHORS, ALL_BOOKS } from "./queries";
+import { useApolloClient, useQuery } from '@apollo/client'
+import { useState } from "react"
+import Authors from "./components/Authors"
+import Books from "./components/Books"
+import NewBook from "./components/NewBook"
+import Notify from "./components/Notify"
+import LoginForm from './components/LoginForm'
+import RerecommendedBooks from './components/RecommendedBooks'
+
+import { All_AUTHORS, ALL_BOOKS } from "./queries"
+import {
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from "react-router-dom"
+import { Navbar, Nav, Button } from 'react-bootstrap'
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
-  const [page, setPage] = useState("authors");
   const result_all_authors = useQuery(All_AUTHORS);
   const result_all_books = useQuery(ALL_BOOKS);
   const [token, setToken] = useState(null);
   const client = useApolloClient();
-
 
   if (result_all_authors.loading || result_all_books.loading) {
     return <div>loading...</div>;
@@ -27,48 +34,102 @@ const App = () => {
     }, 10000)
   }
 
-  // console.log('authors', result_all_authors.data);
-  // console.log('books', result_all_books.data);
-
   const logout = () => {
     setToken(null)
     localStorage.clear()
     client.resetStore()
   }
 
-  if (!token) {
-    return (
-      <div>
-        <Notify errorMessage={errorMessage} />
-        <LoginForm
-          setToken={setToken}
-          setError={notify}
-        />
-      </div>
-    )
+  const padding = {
+    padding: 5
   }
+
+
 
   return (
     <div>
-      <div>
-        <button onClick={() => setPage("authors")}>authors</button>
-        <button onClick={() => setPage("books")}>books</button>
-        <button onClick={() => setPage("add")}>add book</button>
-        <button onClick={() => setPage("login")}>Login</button>
-      </div>
+      <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href="#" as="span">
+              <Link style={padding} to="/authors">authors</Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              <Link style={padding} to="/books">books</Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              <Link style={padding} to="/addBook">add book</Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              <Link style={padding} to="/recommendedBooks">recommended</Link>
+            </Nav.Link>
+            <Nav.Link href="#" as="span">
+              {token
+                ? <em style={padding}>logged in</em>
+                : <Link style={padding} to="/login">login</Link>
+              }
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+
+        <Button type="button" onClick={logout}>
+          logout
+        </Button>
+
+      </Navbar>
+
 
       <Notify errorMessage={errorMessage} />
 
-      <button onClick={logout}>logout</button>
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            !token
+              ? <LoginForm setToken={setToken} setError={notify} />
+              : <Navigate replace to="/authors" />
+          }
+        />
+        <Route
+          path="/authors"
+          element={
+            token
+              ? <Authors show={true} authors={result_all_authors.data.allAuthors} setError={notify} />
+              : <Navigate replace to="/login" />
+          }
+        />
+        <Route
+          path="/books"
+          element={
+            token
+              ? <Books show={true} books={result_all_books.data.allBooks} />
+              : <Navigate replace to="/login" />
+          }
+        />
+        <Route
+          path="/addBook"
+          element={
+            token
+              ? <NewBook show={true} setError={notify} />
+              : <Navigate replace to="/login" />
+          }
+        />
 
-      <LoginForm show={page === "login"} setToken={setToken} setError={notify} />
+        <Route
+          path="/recommendedBooks"
+          element={
+            token
+              ? <RerecommendedBooks books = {result_all_books.data.allBooks} show={true} setError={notify} />
+              : <Navigate replace to="/login" />
+          }
+        />
 
-      <Authors show={page === "authors"} authors={result_all_authors.data.allAuthors} setError={notify} />
-
-      <Books show={page === "books"} books={result_all_books.data.allBooks} />
-
-      <NewBook show={page === "add"} setError={notify} />
-
+        <Route
+          path="/"
+          element={<Navigate replace to="/authors" />}
+        />
+      </Routes>
     </div>
   );
 };
