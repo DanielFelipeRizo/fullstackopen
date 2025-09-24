@@ -1,18 +1,26 @@
 import { useState } from 'react';
+import { useQuery, useLazyQuery } from '@apollo/client'
+import { BOOKS_BY_AUTHOR_GENRE } from "../queries";
 
 const Books = (props) => {
 
   const [selectedGenre, setSelectedGenre] = useState(null);
+  const result = useQuery(BOOKS_BY_AUTHOR_GENRE, {
+    variables: { genre: selectedGenre }
+  });
 
-
-  console.log('props', props.books);
-  
 
   if (!props.show) {
     return null
   }
 
-  const books = props.books;
+  if (result.loading) {
+    return <div>loading...</div>;
+  }
+
+  const books = result.data?.allBooks ?? [];
+
+
   const genresBooks = books.map(b => b.genres).flat().filter((v, i, a) => a.indexOf(v) === i);
 
   // Filtrar libros por género seleccionado
@@ -59,18 +67,7 @@ const Books = (props) => {
 import PropTypes from 'prop-types'
 
 Books.propTypes = {
-  show: PropTypes.bool,
-  books: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      author: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        born: PropTypes.number,
-        id: PropTypes.string
-      }),
-      published: PropTypes.number
-    })
-  ).isRequired
+  show: PropTypes.bool
 }
 
 export default Books

@@ -3,7 +3,6 @@ import { useMutation } from '@apollo/client'
 import { EDIT_BORN_AUTHOR } from '../queries'
 import Select from 'react-select'
 import customStyles from '../styles/selectStyles'
-import { All_AUTHORS } from "../queries";
 
 
 const Authors = ({ authors, show, setError }) => {

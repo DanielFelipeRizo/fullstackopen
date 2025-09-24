@@ -103,7 +103,7 @@ const App = () => {
           path="/books"
           element={
             token
-              ? <Books show={true} books={result_all_books.data.allBooks} />
+              ? <Books show={true} />
               : <Navigate replace to="/login" />
           }
         />

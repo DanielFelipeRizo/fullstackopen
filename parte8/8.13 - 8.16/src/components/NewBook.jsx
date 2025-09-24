@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { v1 as uuid } from "uuid";
 
 import { ADD_BOOK, All_AUTHORS, ALL_BOOKS } from "../queries";
 
@@ -15,6 +14,7 @@ const NewBook = ({ show, setError }) => {
 
     update: (cache, response) => {
       cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        
         return {
           allBooks: allBooks.concat(response.data.addBook),
         }
@@ -77,6 +77,9 @@ const NewBook = ({ show, setError }) => {
   }
 
   const addGenre = () => {
+    if (genre.trim() === '') {
+      return
+    }
     setGenres(genres.concat(genre))
     setGenre('')
   }
