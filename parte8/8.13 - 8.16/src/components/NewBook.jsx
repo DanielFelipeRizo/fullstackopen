@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
 
-import { ADD_BOOK, All_AUTHORS, ALL_BOOKS } from "../queries";
+import { ADD_BOOK, All_AUTHORS, ALL_BOOKS, BOOKS_BY_AUTHOR_GENRE } from "../queries";
 
 const NewBook = ({ show, setError }) => {
   const [title, setTitle] = useState('')
@@ -11,47 +11,13 @@ const NewBook = ({ show, setError }) => {
   const [genres, setGenres] = useState([])
 
   const [createBook] = useMutation(ADD_BOOK, {
-
-    update: (cache, response) => {
-      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
-        
-        return {
-          allBooks: allBooks.concat(response.data.addBook),
-        }
-      })
-
-      // Actualiza autores
-      cache.updateQuery({ query: All_AUTHORS }, ({ allAuthors }) => {
-        const addedAuthor = response.data.addBook.author
-        const existingAuthor = allAuthors.find(a => a.name === addedAuthor.name)
-
-        if (existingAuthor) {
-          return {
-            allAuthors: allAuthors.map(a =>
-              a.name === addedAuthor.name
-                ? { ...a, bookCount: (a.bookCount || 0) + 1 }
-                : a
-            )
-          }
-        } else {
-          const newAuthor = {
-            name: addedAuthor.name,
-            born: null,
-            bookCount: 1,
-            id: addedAuthor.id,
-            __typename: 'Author'
-          }
-
-          return {
-            allAuthors: allAuthors.concat(newAuthor)
-          }
-        }
-      })
-    },
+    refetchQueries: [
+      { query: ALL_BOOKS },
+      { query: BOOKS_BY_AUTHOR_GENRE },
+      { query: All_AUTHORS }
+    ],
     onError: (error) => {
       const messages = error.graphQLErrors.map(e => e.message).join('\n')
-      console.log('Error al crear el libro:', messages);
-
       setError(messages)
     }
   })

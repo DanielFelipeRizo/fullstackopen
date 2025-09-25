@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { BOOKS_BY_AUTHOR_GENRE } from "../queries";
 
 const Books = (props) => {
 
   const [selectedGenre, setSelectedGenre] = useState(null);
+  
   const result = useQuery(BOOKS_BY_AUTHOR_GENRE, {
     variables: { genre: selectedGenre }
   });
