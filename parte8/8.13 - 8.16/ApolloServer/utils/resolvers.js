@@ -4,6 +4,9 @@ import User from "../models/user.js";
 import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { PubSub } from 'graphql-subscriptions';
+const pubsub = new PubSub()
+
 
 dotenv.config();
 
@@ -103,6 +106,8 @@ const resolvers = {
         })
       }
 
+      pubsub.publish('BOOK_ADDED', { bookAdded: book })
+
       return book.populate("author");
     },
 
@@ -176,6 +181,13 @@ const resolvers = {
       return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
     },
   },
+
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    },
+  },
+
 
   // se modifica el resolver de Author para calcular bookCount dinámicamente
   Author: {
