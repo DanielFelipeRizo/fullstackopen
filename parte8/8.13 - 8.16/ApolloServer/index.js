@@ -19,8 +19,9 @@ import User from './models/user.js';
 import typeDefs from './utils/typeDefs.js';
 import resolvers from './utils/resolvers.js';
 
-// --- NUEVO: imports para WebSocket ---
-import { useServer } from 'graphql-ws/use/ws';
+// --- imports para WebSocket ---
+// import { useServer } from 'graphql-ws/use/ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
 import { WebSocketServer } from 'ws';
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -40,23 +41,23 @@ const start = async () => {
   const app = express();
   const httpServer = http.createServer(app);
 
-  // --- NUEVO: crea el schema ejecutable ---
+  // --- crea el schema ejecutable ---
   const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-  // --- NUEVO: crea el servidor WebSocket ---
+  // --- crea el servidor WebSocket ---
   const wsServer = new WebSocketServer({
     server: httpServer,
     path: '/',
   });
 
-  // --- NUEVO: conecta graphql-ws al servidor WebSocket ---
+  // --- conecta graphql-ws al servidor WebSocket ---
   const serverCleanup = useServer({ schema }, wsServer);
 
   const server = new ApolloServer({
     schema,
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
-      // --- NUEVO: cierra el wsServer al apagar Apollo ---
+      // --- cierra el wsServer al apagar Apollo ---
       {
         async serverWillStart() {
           return {
