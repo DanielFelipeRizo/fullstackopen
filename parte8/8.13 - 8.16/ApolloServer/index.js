@@ -47,7 +47,12 @@ const start = async () => {
   // --- crea el servidor WebSocket ---
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: '/',
+    path: '/graphql',
+  });
+
+  // log conexiones WS (debug)
+  wsServer.on('connection', (socket, req) => {
+    console.log('ws connection to', req.url);
   });
 
   // --- conecta graphql-ws al servidor WebSocket ---
@@ -73,7 +78,7 @@ const start = async () => {
   await server.start();
 
   app.use(
-    '/',
+    '/graphql',
     cors(),
     express.json(),
     expressMiddleware(server, {

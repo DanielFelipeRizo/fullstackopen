@@ -1,4 +1,4 @@
-import { useApolloClient, useQuery } from '@apollo/client'
+import { useQuery, useMutation, useSubscription, useApolloClient } from '@apollo/client'
 import { useState } from "react"
 import Authors from "./components/Authors"
 import Books from "./components/Books"
@@ -7,7 +7,7 @@ import Notify from "./components/Notify"
 import LoginForm from './components/LoginForm'
 import RerecommendedBooks from './components/RecommendedBooks'
 
-import { All_AUTHORS, ALL_BOOKS } from "./queries"
+import { All_AUTHORS, ALL_BOOKS, BOOK_ADDED } from "./queries"
 import {
   Routes,
   Route,
@@ -22,6 +22,13 @@ const App = () => {
   const result_all_books = useQuery(ALL_BOOKS);
   const [token, setToken] = useState(null);
   const client = useApolloClient();
+
+  
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      console.log('data ----------> ', data)
+    }
+  })
 
   if (result_all_authors.loading || result_all_books.loading) {
     return <div>loading...</div>;
@@ -120,7 +127,7 @@ const App = () => {
           path="/recommendedBooks"
           element={
             token
-              ? <RerecommendedBooks books = {result_all_books.data.allBooks} show={true} setError={notify} />
+              ? <RerecommendedBooks books={result_all_books.data.allBooks} show={true} setError={notify} />
               : <Navigate replace to="/login" />
           }
         />

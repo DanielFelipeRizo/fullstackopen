@@ -7,7 +7,6 @@ import dotenv from "dotenv";
 import { PubSub } from 'graphql-subscriptions';
 const pubsub = new PubSub()
 
-
 dotenv.config();
 
 const resolvers = {
@@ -106,9 +105,19 @@ const resolvers = {
         })
       }
 
-      pubsub.publish('BOOK_ADDED', { bookAdded: book })
+      // sin el populate no funciona la suscripción
+      const populatedBook = await book.populate("author")
+      console.log('publishing BOOK_ADDED ->', populatedBook.title)
+      pubsub.publish('BOOK_ADDED', { bookAdded: populatedBook })
 
-      return book.populate("author");
+      return populatedBook
+
+
+      // pubsub.publish('BOOK_ADDED', { bookAdded: book })
+
+      // return book.populate("author");
+
+      
     },
 
     editAuthor: async (root, args, context) => {
