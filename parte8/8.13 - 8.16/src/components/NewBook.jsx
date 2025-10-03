@@ -11,11 +11,15 @@ const NewBook = ({ show, setError }) => {
   const [genres, setGenres] = useState([])
 
   const [createBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [
-      { query: ALL_BOOKS },
-      { query: BOOKS_BY_AUTHOR_GENRE },
-      { query: All_AUTHORS }
-    ],
+    update: (cache, { data }) => {
+      const addedBook = data.addBook
+      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        if (allBooks.some(b => b.id === addedBook.id)) {
+          return { allBooks }
+        }
+        return { allBooks: allBooks.concat(addedBook) }
+      })
+    },
     onError: (error) => {
       const messages = error.graphQLErrors.map(e => e.message).join('\n')
       setError(messages)

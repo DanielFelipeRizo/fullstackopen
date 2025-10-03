@@ -23,10 +23,21 @@ const App = () => {
   const [token, setToken] = useState(null);
   const client = useApolloClient();
 
-  
+
   useSubscription(BOOK_ADDED, {
-    onData: ({ data }) => {
+    onData: ({ data, client }) => {
       console.log('data ----------> ', data)
+      const addedBook = data.data.bookAdded
+
+      // Actualizar cache de Apollo
+      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        if (allBooks.some(b => b.id === addedBook.id)) {
+          return { allBooks }
+        }
+        return {
+          allBooks: allBooks.concat(addedBook)
+        }
+      })
     }
   })
 
