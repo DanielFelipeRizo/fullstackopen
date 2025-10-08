@@ -8,7 +8,7 @@ import LoginForm from './components/LoginForm'
 import RerecommendedBooks from './components/RecommendedBooks'
 import { gql } from "@apollo/client";
 
-import { All_AUTHORS, ALL_BOOKS, BOOK_ADDED, BOOKS_BY_AUTHOR_GENRE } from "./queries"
+import { All_AUTHORS, ALL_BOOKS, BOOK_ADDED } from "./queries"
 import {
   Routes,
   Route,
