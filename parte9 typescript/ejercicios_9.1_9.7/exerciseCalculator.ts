@@ -1,77 +1,86 @@
 interface exerciseValues {
-  numDays: number;
+  periodLength: number;
   trainingDays: number;
-  originalTarget: number;
-  calculatedAverageTime: number;
-  targetSuccess: boolean;
+  success: boolean;
   rating: number;
   ratingDescription: string;
+  target: number;
+  average: number;
 }
 
-const parseArguments = (args: string[]): BmiValues => {
-  if (args.length < 4) throw new Error("Not enough arguments");
-  if (args.length > 4) throw new Error("Too many arguments");
+const parseArrArguments = (args: string[]): number[] => {
 
-  if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
-    if (Number(args[2]) > 300 || Number(args[3]) > 300) {
-      throw new Error("Values too high");
+  if (args.length < 3) throw new Error("Not enough arguments");
+
+  // Tomamos todos los argumentos desde la posición 2 en adelante
+  const arrDays = args.slice(2).map((arg, index) => {
+    const value = Number(arg);
+
+    if (isNaN(value)) {
+      throw new Error(`Argument at position ${index + 2} ('${arg}') is not a number`);
     }
 
-    return {
-      value1: Number(args[2]),
-      value2: Number(args[3]),
-    };
-  } else {
-    throw new Error("Provided values were not numbers!");
+    if (value > 24) {
+      throw new Error(`Argument at position ${index + 2} ('${arg}') exceeds 24`);
+    }
+
+    if (value < 0) {
+      throw new Error(`Argument at position ${index + 2} ('${arg}') is negative`);
+    }
+
+    return value;
+  });
+
+  return arrDays;
+};
+
+
+
+const calculator = (arrDays: number[]): exerciseValues => {
+
+  // const arrDays: number[] = arrValues;
+  const target: number = arrDays.pop() || 0;
+
+  const periodLength: number = arrDays.length;
+
+  const trainingDays: number = (arrDays.filter(d => d > 0).length);
+
+  const average: number = arrDays.reduce((a, b) => a + b, 0) / periodLength;
+
+  type Rating = 1 | 2 | 3;
+
+  let rating: Rating = 1;
+  let ratingDescription: string = '';
+  let success: boolean = false;
+
+  if (average >= target) {
+    rating = 3;
+    ratingDescription = 'Muy bien, objetivo cumplido';
+    success = true;
+  } else if (average >= target / 2) {
+    rating = 2;
+    ratingDescription = 'No está mal, pero podrías hacerlo mejor';
   }
-};
+  else if (average < target / 2) {
+    rating = 1;
+    ratingDescription = 'Vamos, que no has hecho nada';
+  }
 
-const multiplicator = (a: number, b: number, printText: string) => {
-  console.log(printText, a * b);
-};
+  return {
+    periodLength: periodLength,
+    trainingDays: trainingDays,
+    success: success,
+    rating: rating,
+    ratingDescription: ratingDescription,
+    target: target,
+    average: average,
+  };
 
-type BmiCategory =
-  | "Bajo peso (underweight)"
-  | "Peso normal (normal weight)"
-  | "Sobrepeso (overweight)"
-  | "Obesidad (obesity)";
-
-const getBmiCategory = (bmi: number): BmiCategory => {
-  if (bmi < 18.5) return "Bajo peso (underweight)";
-  if (bmi < 24.9) return "Peso normal (normal weight)";
-  if (bmi < 29.9) return "Sobrepeso (overweight)";
-  return "Obesidad (obesity)";
-};
-
-const bmiCalculator = (a: number, b: number, printText: string) => {
-  const heightInMeters = b / 100;
-  const bmi = a / (heightInMeters * heightInMeters);
-  const category = getBmiCategory(bmi);
-
-  console.log(`${printText} ${bmi.toFixed(2)} - ${category}`);
-  // if(bmi < 18.5){
-  //     console.log(printText, bmi, ' - Bajo peso (underweight)');
-  // }
-  // else if(bmi >= 18.5 && bmi < 24.9){
-  //     console.log(printText, bmi, ' - Peso normal (normal weight)');
-  // }
-  // else if(bmi >= 25 && bmi < 29.9){
-  //     console.log(printText, bmi, ' - Sobrepeso (overweight)');
-  // }
-  // else{
-  //     console.log(printText, bmi, ' - Obesidad (obesity)');
-  // }
-  // console.log(printText, a / (heightInMeters * heightInMeters));
 };
 
 try {
-  const { value1, value2 } = parseArguments(process.argv);
-  //   multiplicator(value1, value2, `Multiplied ${value1} and ${value2}, the result is:`);
-  bmiCalculator(
-    value1,
-    value2,
-    `El peso: ${value1} kg y estatura: ${value2} cm, da como resultado:`
-  );
+  const validatedArray = parseArrArguments(process.argv);
+  console.log(calculator(validatedArray));
 } catch (error: unknown) {
   let errorMessage = "Something bad happened.";
   if (error instanceof Error) {

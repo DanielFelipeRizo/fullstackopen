@@ -8,7 +8,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "ts-node": "ts-node",
-    "calculate": "ts-node bmiCalculator.ts"
+    "calculate": "ts-node bmiCalculator.ts",
+    "exercise": "ts-node exerciseCalculator.ts"
   },
   "devDependencies": {
     "ts-node": "^10.9.2",
