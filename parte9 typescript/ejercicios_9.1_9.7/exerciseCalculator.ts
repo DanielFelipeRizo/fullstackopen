@@ -1,6 +1,11 @@
-interface BmiValues {
-  value1: number;
-  value2: number;
+interface exerciseValues {
+  numDays: number;
+  trainingDays: number;
+  originalTarget: number;
+  calculatedAverageTime: number;
+  targetSuccess: boolean;
+  rating: number;
+  ratingDescription: string;
 }
 
 const parseArguments = (args: string[]): BmiValues => {
