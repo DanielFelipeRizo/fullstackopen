@@ -3,7 +3,7 @@ interface BmiValues {
   value2: number;
 }
 
-const parseArguments = (args: string[]): BmiValues => {
+export const parseArguments = (args: string[]): BmiValues => {
   if (args.length < 4) throw new Error("Not enough arguments");
   if (args.length > 4) throw new Error("Too many arguments");
 
@@ -21,8 +21,20 @@ const parseArguments = (args: string[]): BmiValues => {
   }
 };
 
-const multiplicator = (a: number, b: number, printText: string) => {
-  console.log(printText, a * b);
+export const parseArgumentsUrl = (args: string[]): BmiValues => {
+
+  if (!isNaN(Number(args[0])) && !isNaN(Number(args[1]))) {
+    if (Number(args[0]) > 300 || Number(args[1]) > 300) {
+      throw new Error("Values too high");
+    }
+
+    return {
+      value1: Number(args[0]),
+      value2: Number(args[1]),
+    };
+  } else {
+    throw new Error("Provided values were not numbers!");
+  }
 };
 
 type BmiCategory =
@@ -38,34 +50,21 @@ const getBmiCategory = (bmi: number): BmiCategory => {
   return "Obesidad (obesity)";
 };
 
-const bmiCalculator = (a: number, b: number, printText: string) => {
+export const bmiCalculator = (a: number, b: number) => {
   const heightInMeters = b / 100;
   const bmi = a / (heightInMeters * heightInMeters);
   const category = getBmiCategory(bmi);
 
-  console.log(`${printText} ${bmi.toFixed(2)} - ${category}`);
-  // if(bmi < 18.5){
-  //     console.log(printText, bmi, ' - Bajo peso (underweight)');
-  // }
-  // else if(bmi >= 18.5 && bmi < 24.9){
-  //     console.log(printText, bmi, ' - Peso normal (normal weight)');
-  // }
-  // else if(bmi >= 25 && bmi < 29.9){
-  //     console.log(printText, bmi, ' - Sobrepeso (overweight)');
-  // }
-  // else{
-  //     console.log(printText, bmi, ' - Obesidad (obesity)');
-  // }
-  // console.log(printText, a / (heightInMeters * heightInMeters));
+  // console.log(`${printText} ${bmi.toFixed(2)} - ${category}`);
+  return { bmi: bmi.toFixed(2), category };
+
 };
 
 try {
   const { value1, value2 } = parseArguments(process.argv);
-  //   multiplicator(value1, value2, `Multiplied ${value1} and ${value2}, the result is:`);
   bmiCalculator(
     value1,
-    value2,
-    `El peso: ${value1} kg y estatura: ${value2} cm, da como resultado:`
+    value2
   );
 } catch (error: unknown) {
   let errorMessage = "Something bad happened.";
@@ -74,3 +73,5 @@ try {
   }
   console.log(errorMessage);
 }
+
+export default { bmiCalculator }
