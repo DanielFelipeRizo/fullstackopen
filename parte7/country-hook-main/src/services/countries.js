@@ -27,7 +27,8 @@ const getByName = async (contryName) => {
         return response
     } catch (error) {
         console.error('Error fetching country:', error)
-        throw error
+        return null
+        // throw error
     }
 }
 // const create = newObject => {

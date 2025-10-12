@@ -1,12 +1,16 @@
 const Country = ({ country }) => {
 
-console.log('country desde Country', country);
+  // console.log('country desde Country', country);
 
   // if (!country) {
-  //   return null
+  //   return (
+  //     <div>
+  //       Loading...
+  //     </div>
+  //   )
   // }
 
-  if (!country) {
+  if (country === null) {
     return (
       <div>
         not found...
@@ -18,8 +22,8 @@ console.log('country desde Country', country);
     <div>
       <h3>{country.data.name.common} </h3>
       <div>capital {country.data.capital} </div>
-      <div>population {country.data.population}</div> 
-      <img src={country.data.flags.png} height='100' alt={`flag of ${country.data.name}`}/>  
+      <div>population {country.data.population}</div>
+      <img src={country.data.flags.png} height='100' alt={`flag of ${country.data.name}`} />
     </div>
   )
 }
