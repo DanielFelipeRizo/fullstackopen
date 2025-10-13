@@ -1,11 +1,56 @@
-import js from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
+import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import globals from "globals";
+import tsParser from "@typescript-eslint/parser";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import js from "@eslint/js";
+import { FlatCompat } from "@eslint/eslintrc";
 
-export default defineConfig([
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: globals.browser } },
-  tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
-]);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const compat = new FlatCompat({
+    baseDirectory: __dirname,
+    recommendedConfig: js.configs.recommended,
+    allConfig: js.configs.all
+});
+
+export default defineConfig([{
+    extends: compat.extends(
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    ),
+
+    plugins: {
+        "@typescript-eslint": typescriptEslint as unknown as any,
+    },
+
+    languageOptions: {
+        globals: {
+            ...globals.node,
+        },
+
+        parser: tsParser,
+        ecmaVersion: 5,
+        sourceType: "commonjs",
+
+        parserOptions: {
+            project: "./tsconfig.json",
+        },
+    },
+
+    rules: {
+        "@typescript-eslint/semi": ["error"],
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/restrict-template-expressions": "off",
+        "@typescript-eslint/restrict-plus-operands": "off",
+
+        "@typescript-eslint/no-unused-vars": ["error", {
+            argsIgnorePattern: "^_",
+        }],
+
+        "no-case-declarations": "off",
+    },
+}]);
