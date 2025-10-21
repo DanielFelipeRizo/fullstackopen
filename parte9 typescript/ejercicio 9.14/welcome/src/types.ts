@@ -29,4 +29,15 @@ interface CoursePartBackground extends CoursePartDescription {
   kind: "background"
 }
 
+// interface CoursePart {
+//   name: string;
+//   exerciseCount: number;
+// }
+
+
+
 export type CoursePart = CoursePartBasic | CoursePartGroup | CoursePartBackground;
+
+export interface CourseAllParts {
+  courseParts: CoursePart[];
+}
