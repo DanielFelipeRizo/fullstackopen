@@ -47,9 +47,14 @@ const parseVisibility = (visibility: unknown): Visibility => {
 };
 
 const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
+  
+  console.log('object---------', object);
+  
   if ( !object || typeof object !== 'object' ) {
     throw new Error('Incorrect or missing data');
   }
+
+  
 
   if ('comment' in object && 'date' in object && 'weather' in object && 'visibility' in object)  {
     const newEntry: NewDiaryEntry = {

@@ -6,12 +6,12 @@ const router = express.Router();
 
 router.get('/', (_req, res) => {
   const result = diaryService.getNonSensitiveEntries()
-  console.log('---------', result[0]);
+  // console.log('---------', result[0]);
   res.send(result);
 })
 
 router.get('/:id', (req, res) => {
-  const diary = diaryService.findById(Number(req.params.id));
+  const diary = diaryService.findById(req.params.id);
 
   if (diary) {
     res.send(diary);
