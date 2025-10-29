@@ -16,6 +16,8 @@ const PatientDetails = () => {
       setLoading(true);
       try {
         const p = await patientService.getById(id);
+        //console.log('res->', p);
+
         setPatient(p);
       } catch (e) {
         console.error(e);
@@ -37,7 +39,27 @@ const PatientDetails = () => {
       <Typography>Gender: {patient.gender}</Typography>
       <Typography>SSN: {patient.ssn ?? "—"}</Typography>
       <Typography>Occupation: {patient.occupation}</Typography>
+      <br></br>
+      <Typography variant="h6"> Entrites </Typography>
+      <Typography> {patient.entries?.length === 0 ? "No entries" : ""} </Typography>
+
+      {patient.entries?.map(pe => (
+        <Box key={pe.id}>
+          <li>
+            <Typography> Data: {pe.date} <br></br>
+              Description: {pe.description} </Typography>
+
+            {pe.diagnosisCodes?.map((dc) => (
+              <Typography key={dc}>Code: <li>{dc}</li></Typography>
+            ))}
+
+          </li>
+
+        </Box>
+      )
+      )}
     </Box>
+
   );
 };
 
