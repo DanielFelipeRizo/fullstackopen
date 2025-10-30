@@ -1,22 +1,25 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import patientService from "../services/patients";
-import { Patient } from "../types";
+import patientService from "../../services/patients";
+import diagnosisService from "../../services/diagnoses";
+import { Patient, Diagnosis } from "../../types";
 import { Typography, Box } from "@mui/material";
+import EntryDetails from "./EntryDetails";
 
 const PatientDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+
 
   useEffect(() => {
     if (!id) return;
     const fetchPatient = async () => {
       setLoading(true);
       try {
-        const p = await patientService.getById(id);
-        //console.log('res->', p);
+        const p: Patient = await patientService.getById(id);
 
         setPatient(p);
       } catch (e) {
@@ -26,6 +29,17 @@ const PatientDetails = () => {
         setLoading(false);
       }
     };
+
+    const fetchDiagnosesForCode = async () => {
+      try {
+        const diagnoses: Diagnosis[] = await diagnosisService.getAllDiagnoses();
+        setDiagnoses(diagnoses);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    void fetchDiagnosesForCode();
     void fetchPatient();
   }, [id]);
 
@@ -43,21 +57,8 @@ const PatientDetails = () => {
       <Typography variant="h6"> Entrites </Typography>
       <Typography> {patient.entries?.length === 0 ? "No entries" : ""} </Typography>
 
-      {patient.entries?.map(pe => (
-        <Box key={pe.id}>
-          <li>
-            <Typography> Data: {pe.date} <br></br>
-              Description: {pe.description} </Typography>
-
-            {pe.diagnosisCodes?.map((dc) => (
-              <Typography key={dc}>Code: <li>{dc}</li></Typography>
-            ))}
-
-          </li>
-
-        </Box>
-      )
-      )}
+      <EntryDetails patient={patient} diagnoses={diagnoses} />
+      
     </Box>
 
   );
