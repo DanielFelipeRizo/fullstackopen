@@ -48,19 +48,20 @@ const PatientDetails = () => {
   if (!patient) return <div>No patient found</div>;
 
   return (
-    <Box>
-      <Typography variant="h5">{patient.name}</Typography>
-      <Typography>Gender: {patient.gender}</Typography>
-      <Typography>SSN: {patient.ssn ?? "—"}</Typography>
-      <Typography>Occupation: {patient.occupation}</Typography>
-      <br></br>
-      <Typography variant="h6"> Entrites </Typography>
-      <Typography> {patient.entries?.length === 0 ? "No entries" : ""} </Typography>
+    <div className="patient-details">
+      <Box>
+        <Typography variant="h5">{patient.name}</Typography>
+        <Typography>Gender: {patient.gender}</Typography>
+        <Typography>SSN: {patient.ssn ?? "—"}</Typography>
+        <Typography>Occupation: {patient.occupation}</Typography>
+        <br></br>
+        <Typography variant="h6"> Entrites </Typography>
+        <Typography> {patient.entries?.length === 0 ? "No entries" : ""} </Typography>
 
-      <EntryDetails patient={patient} diagnoses={diagnoses} />
-      
-    </Box>
+        <EntryDetails patient={patient} diagnoses={diagnoses} />
 
+      </Box>
+    </div>
   );
 };
 

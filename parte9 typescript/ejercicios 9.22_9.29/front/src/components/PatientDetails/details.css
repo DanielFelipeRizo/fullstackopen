@@ -5,3 +5,24 @@
   margin: 8px 0;
   border-radius: 4px;
 }
+
+.patient-details {
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.entry-details {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.entry-header {
+  border: 1px solid #ccc;
+  padding: 8px;
+  margin: 8px 0;
+  border-radius: 4px;
+}
