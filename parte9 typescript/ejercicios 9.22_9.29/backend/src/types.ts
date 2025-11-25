@@ -73,10 +73,11 @@ export type Entry =
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
 
-
+  
 
 // Define omit especial para uniones
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
 
 // Define Entry sin la propiedad 'id'
-export type EntryWithoutId = UnionOmit<Entry, 'id'>;
+//export type EntryWithoutId = UnionOmit<Entry, 'id'>;
+export type NewEntry = UnionOmit<Entry, 'id'>;
