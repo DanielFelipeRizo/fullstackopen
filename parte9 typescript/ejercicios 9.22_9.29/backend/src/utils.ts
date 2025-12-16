@@ -242,5 +242,5 @@ const toNewEntry = (object: unknown): NewEntry => {
 
 
 
-export default toNewPatient;
+export {toNewPatient};
 export { toNewEntry };
