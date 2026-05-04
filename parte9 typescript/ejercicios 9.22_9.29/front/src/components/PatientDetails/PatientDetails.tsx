@@ -113,10 +113,9 @@ const PatientDetails = () => {
         </Button>
       )}
 
-        <EntryDetails patient={patient} diagnoses={diagnoses} />
+      <EntryDetails patient={patient} diagnoses={diagnoses} />
 
       </Box>
-    </div>
   );
 };
 
