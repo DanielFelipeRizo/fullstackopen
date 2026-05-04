@@ -1,7 +1,25 @@
 
 .diagnosis-div {
-  border: 1px solid #ccc;
-  padding: 8px;
-  margin: 8px 0;
-  border-radius: 4px;
+  margin-top: 8px;
 }
+
+.entry-card {
+  border: 2px solid #ccc;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+}
+
+.entry-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-color: #1976d2;
+}
+
+.health-rating-0 { color: #4caf50; }
+.health-rating-1 { color: #ffeb3b; }
+.health-rating-2 { color: #ff9800; }
+.health-rating-3 { color: #f44336; }
