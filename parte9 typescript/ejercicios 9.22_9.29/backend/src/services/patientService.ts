@@ -3,8 +3,8 @@ import type {
   NonSensitivePatient,
   NewPatient,
   Patient,
-  Entry,
-  EntryWithoutId
+  NewEntry,
+  Entry
 } from "../types.js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -36,8 +36,9 @@ const addPatient = (patient: NewPatient): Patient => {
   return newPatient;
 };
 
-const addEntry = (patientId: string, entry: EntryWithoutId): Entry => {
+const addEntry = (patientId: string, entry: NewEntry): Entry => {
   const patient = patientsData.find((p) => p.id === patientId);
+
   if (!patient) {
     throw new Error("Patient not found");
   }

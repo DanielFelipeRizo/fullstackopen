@@ -1,5 +1,5 @@
 import { Gender, HealthCheckRating } from "./types.js";
-import type { Entry, NewPatient, EntryWithoutId, Diagnosis } from "./types.js";
+import type { Diagnosis, Entry, NewPatient, NewEntry } from "./types.js";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
@@ -12,6 +12,7 @@ const isEntryArray = (arr: unknown): arr is Entry[] => {
 
 }
 
+// -- NewPatient helpers --
 const parseName = (name: unknown): string => {
   if (!isString(name)) {
     throw new Error("Incorrect or missing name");
@@ -64,16 +65,17 @@ const parseEntries = (entries: unknown): Entry[] => {
   return entries;
 }
 
+// -- NewEntry helpers --
 const parseDescription = (description: unknown): string => {
   if (!isString(description)) {
-    throw new Error("Incorrect or missing description");
+    throw new Error('Incorrect or missing description');
   }
   return description;
 };
 
 const parseSpecialist = (specialist: unknown): string => {
   if (!isString(specialist)) {
-    throw new Error("Incorrect or missing specialist");
+    throw new Error('Incorrect or missing specialist');
   }
   return specialist;
 };
@@ -92,96 +94,56 @@ const isHealthCheckRating = (param: number): param is HealthCheckRating => {
 };
 
 const parseHealthCheckRating = (rating: unknown): HealthCheckRating => {
-  if (typeof rating !== 'number' || !isHealthCheckRating(rating)) {
-    throw new Error("Incorrect or missing healthCheckRating: " + rating);
+  if (!isNumber(rating) || !isHealthCheckRating(rating)) {
+    throw new Error('Incorrect or missing health check rating: ' + rating);
   }
   return rating;
 };
 
 const parseDischarge = (discharge: unknown): { date: string; criteria: string } => {
-  if (!discharge || typeof discharge !== 'object' || !('date' in discharge) || !('criteria' in discharge)) {
-    throw new Error("Incorrect or missing discharge");
-  }
-
-  return {
-    date: parseDate(discharge.date),
-    criteria: parseName(discharge.criteria) // Using parseName as a generic string validator
-  };
-};
-
-const parseSickLeave = (sickLeave: unknown): { startDate: string; endDate: string } => {
-  if (!sickLeave || typeof sickLeave !== 'object' || !('startDate' in sickLeave) || !('endDate' in sickLeave)) {
-    throw new Error("Incorrect or missing sickLeave");
-  }
-
-  return {
-    startDate: parseDate(sickLeave.startDate),
-    endDate: parseDate(sickLeave.endDate)
-  };
-};
-
-export const toNewEntry = (object: unknown): EntryWithoutId => {
-  if (!object || typeof object !== "object") {
-    throw new Error("Incorrect or missing data");
-  }
-
   if (
-    "description" in object &&
-    "date" in object &&
-    "specialist" in object &&
-    "type" in object
+    !discharge ||
+    typeof discharge !== 'object' ||
+    !('date' in discharge) ||
+    !('criteria' in discharge) ||
+    !isString((discharge as { date: unknown }).date) ||
+    !isDate((discharge as { date: string }).date) ||
+    !isString((discharge as { criteria: unknown }).criteria)
   ) {
-    const baseEntry = {
-      description: parseDescription(object.description),
-      date: parseDate(object.date),
-      specialist: parseSpecialist(object.specialist),
-      diagnosisCodes: parseDiagnosisCodes(object),
-    };
-
-    switch (object.type) {
-      case "HealthCheck":
-        if ("healthCheckRating" in object) {
-          return {
-            ...baseEntry,
-            type: "HealthCheck",
-            healthCheckRating: parseHealthCheckRating(object.healthCheckRating),
-          };
-        }
-        throw new Error("Missing healthCheckRating for HealthCheck entry");
-
-      case "Hospital":
-        if ("discharge" in object) {
-          return {
-            ...baseEntry,
-            type: "Hospital",
-            discharge: parseDischarge(object.discharge),
-          };
-        }
-        throw new Error("Missing discharge for Hospital entry");
-
-      case "OccupationalHealthcare":
-        if ("employerName" in object) {
-          const entry: EntryWithoutId = {
-            ...baseEntry,
-            type: "OccupationalHealthcare",
-            employerName: parseName(object.employerName),
-          };
-          if ("sickLeave" in object) {
-            (entry as any).sickLeave = parseSickLeave(object.sickLeave);
-          }
-          return entry;
-        }
-        throw new Error("Missing employerName for OccupationalHealthcare entry");
-
-      default:
-        throw new Error("Incorrect entry type");
-    }
+    throw new Error('Incorrect or missing discharge info');
   }
-
-  throw new Error("Incorrect data: a field missing");
+  return discharge as { date: string; criteria: string };
 };
 
-export const toNewPatient = (object: unknown): NewPatient => {
+const parseSickLeave = (sickLeave: unknown): { startDate: string; endDate: string } | undefined => {
+  if (!sickLeave) return undefined;
+  if (
+    typeof sickLeave !== 'object' ||
+    !('startDate' in sickLeave) ||
+    !('endDate' in sickLeave) ||
+    !isString((sickLeave as { startDate: unknown }).startDate) ||
+    !isDate((sickLeave as { startDate: string }).startDate) ||
+    !isString((sickLeave as { endDate: unknown }).endDate) ||
+    !isDate((sickLeave as { endDate: string }).endDate)
+  ) {
+    throw new Error('Incorrect sick leave info');
+  }
+  return sickLeave as { startDate: string; endDate: string };
+};
+
+const parseEmployerName = (employerName: unknown): string => {
+  if (!isString(employerName)) {
+    throw new Error('Incorrect or missing employer name');
+  }
+  return employerName;
+};
+
+const isNumber = (text: unknown): text is number => {
+  return typeof text === 'number' || text instanceof Number;
+};
+
+// -- Public parsers --
+const toNewPatient = (object: unknown): NewPatient => {
   if (!object || typeof object !== "object") {
     throw new Error("Incorrect or missing data");
   }
@@ -211,7 +173,74 @@ export const toNewPatient = (object: unknown): NewPatient => {
   throw new Error("Incorrect data: a field missing");
 };
 
-export default {
-  toNewPatient,
-  toNewEntry
+
+const toNewEntry = (object: unknown): NewEntry => {
+  if (!object || typeof object !== 'object') {
+    throw new Error('Incorrect or missing data');
+  }
+
+  if (
+    'description' in object &&
+    'date' in object &&
+    'specialist' in object &&
+    'type' in object
+  ) {
+    const newEntryBase = {
+      description: parseDescription(object.description),
+      date: parseDate(object.date),
+      specialist: parseSpecialist(object.specialist),
+      diagnosisCodes: parseDiagnosisCodes(object),
+    };
+
+    switch (object.type) {
+      case 'HealthCheck':
+        if ('healthCheckRating' in object) {
+          const healthCheckEntry: NewEntry = {
+            ...newEntryBase,
+            type: 'HealthCheck',
+            healthCheckRating: parseHealthCheckRating(object.healthCheckRating),
+          };
+          return healthCheckEntry;
+        }
+        throw new Error('Missing healthCheckRating');
+
+      case 'Hospital':
+        if ('discharge' in object) {
+          const hospitalEntry: NewEntry = {
+            ...newEntryBase,
+            type: 'Hospital',
+            discharge: parseDischarge(object.discharge),
+          };
+          return hospitalEntry;
+        }
+        throw new Error('Missing discharge');
+
+      case 'OccupationalHealthcare':
+        if ('employerName' in object) {
+          const occupationalEntry: NewEntry = {
+            ...newEntryBase,
+            type: 'OccupationalHealthcare',
+            employerName: parseEmployerName(object.employerName),
+          };
+          if ('sickLeave' in object) {
+            const sickLeave = parseSickLeave(object.sickLeave);
+            if (sickLeave) {
+              occupationalEntry.sickLeave = sickLeave;
+            }
+          }
+          return occupationalEntry;
+        }
+        throw new Error('Missing employerName');
+
+      default:
+        throw new Error('Incorrect entry type');
+    }
+  }
+
+  throw new Error('Incorrect data: a field missing');
 };
+
+
+
+export {toNewPatient};
+export { toNewEntry };
